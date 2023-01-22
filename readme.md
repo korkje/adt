@@ -20,6 +20,9 @@ TypeScript's enums are not very powerful, and they are often advised against for
   - [Beyond enums](#beyond-enums)
   - [Nested variants](#nested-variants)
   - [Matching nested variants](#matching-nested-variants)
+- [Option and Result](#option-and-result)
+  - [Option](#option)
+  - [Result](#result)
 
 ## Installation
 ```bash
