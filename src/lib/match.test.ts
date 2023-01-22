@@ -1,7 +1,5 @@
 import { test, expect } from "vitest";
-
 import match, { def } from "./match";
-
 import adt, { empty } from "./adt";
 import type { Variants } from "./adt";
 

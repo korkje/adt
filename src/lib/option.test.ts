@@ -1,8 +1,6 @@
 import { test, expect } from "vitest";
-
 import type Option from "./option";
 import { some, none } from "./option";
-
 import { empty, tag } from "./adt";
 import match from "./match";
 

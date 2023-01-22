@@ -1,8 +1,6 @@
 import { test, expect } from "vitest";
-
 import type Result from "./result";
 import { ok, err } from "./result";
-
 import { tag } from "./adt";
 import match from "./match";
 
@@ -15,22 +13,37 @@ test("Simple usage", () => {
 });
 
 test("Usage with match", () => {
-    type StringResult = Result<string, string>;
+    type StringResult = Result<string, Error>;
 
     const ok_string = ok("hello") as StringResult;
-    const err_string = err("error") as StringResult;
+    const err_string = err(new Error("error")) as StringResult;
 
     const ok_result = match(ok_string, {
         ok: value => value,
-        err: () => "error",
+        err: error => error.message,
     });
 
     expect(ok_result).toBe("hello");
 
     const err_result = match(err_string, {
         ok: value => value,
-        err: () => "error",
+        err: error => error.message,
     });
 
     expect(err_result).toBe("error");
+});
+
+test("Usage with throw", () => {
+    type StringResult = Result<string, Error>;
+
+    const err_string = err(new Error("error")) as StringResult;
+
+    expect(() => {
+        match(err_string, {
+            ok: value => value,
+            err: error => {
+                throw error;
+            },
+        });
+    }).toThrowError("error");
 });
