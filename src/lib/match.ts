@@ -30,7 +30,7 @@ export const match = <
         throw new Error(`no matcher for ${variant[tag]}!`);
     }
 
-    return matcher(variant.value) as Out<M[keyof M]>
+    return matcher(variant.value) as Out<M[keyof M]>;
 };
 
 export default match;

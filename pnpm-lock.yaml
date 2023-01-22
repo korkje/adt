@@ -2,14 +2,10 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.11.18
-  this: file:./korkje-adt-0.1.0.tgz
   typescript: ^4.9.4
   vite: ^4.0.0
   vite-plugin-dts: ^1.7.1
   vitest: ^0.27.3
-
-dependencies:
-  this: file:korkje-adt-0.1.0.tgz
 
 devDependencies:
   '@types/node': 18.11.18
@@ -1094,19 +1090,3 @@ packages:
     optionalDependencies:
       commander: 9.5.0
     dev: true
-
-  'file:':
-    resolution: {directory: '', type: directory}
-    name: '@korkje/adt'
-    version: 0.1.0
-    dependencies:
-      this: file:korkje-adt-0.1.0.tgz
-    dev: false
-
-  file:korkje-adt-0.1.0.tgz:
-    resolution: {integrity: sha512-cYWrHLSvrGWaK+sCYPeuogF5Yb93ek7gX0+7NsCd3ApZ/yy0tQpYu0uKMLtIxy6x+aERrFHG00RJwV9hkXap3A==, tarball: file:korkje-adt-0.1.0.tgz}
-    name: '@korkje/adt'
-    version: 0.1.0
-    dependencies:
-      this: 'file:'
-    dev: false

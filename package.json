@@ -4,6 +4,7 @@
     "description": "Rust-inspired fancy enums for TypeScript",
     "scripts": {
         "build": "tsc && vite build",
+        "prepublish": "npm run build",
         "test": "vitest"
     },
     "devDependencies": {
@@ -27,7 +28,6 @@
             "import": "./dist/lib/*.js",
             "types": "./dist/lib/*.d.ts"
         }
-
     },
     "files": [
         "dist"
