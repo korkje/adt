@@ -1,16 +1,24 @@
-# ADT
+# adt - [A]lgebraic [D]ata [T]ypes
 
 [![npm version](https://badge.fury.io/js/%40korkje%2Fadt.svg)](https://badge.fury.io/js/%40korkje%2Fadt)
 
-## Table of contents
-- [About](#about)
-- [Installation](#installation)
-- [Usage examples](#usage-examples)
+## Introduction
 
-## About
 This package attempts to bring a version of Rust's "fancy enums" to TypeScript. These are referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, or variants. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
 
 TypeScript's enums are not very powerful, and they are often advised against for various reasons. Rust's enums are much more powerful, and can be used to represent a wide variety of data structures. This package attempts to bring some of that power to TypeScript.
+
+## Table of contents
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Creating a normal enum](#creating-a-normal-enum)
+  - [Useful typing](#useful-typing)
+  - [Matching variants](#matching-variants)
+  - [Narrowing types](#narrowing-types)
+  - [Adding data to variants](#adding-data-to-variants)
+  - [Nested variants](#nested-variants)
+  - [Matching nested variants](#matching-nested-variants)
 
 ## Installation
 ```bash
