@@ -1,0 +1,28 @@
+{
+    "name": "@korkje/adt",
+    "version": "0.1.0",
+    "description": "Rust-inspired fancy enums for TypeScript",
+    "scripts": {
+        "build": "tsc && vite build",
+        "test": "vitest"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.18",
+        "typescript": "^4.9.4",
+        "vite": "^4.0.0",
+        "vite-plugin-dts": "^1.7.1",
+        "vitest": "^0.27.3"
+    },
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js",
+        "./*": "./dist/lib/*.js"
+
+    },
+    "files": [
+        "dist"
+    ]
+}
