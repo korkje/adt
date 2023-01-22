@@ -1,4 +1,4 @@
-# adt - [A]lgebraic [D]ata [T]ypes
+# [a]lgebraic [d]ata [t]ypes
 
 [![npm version](https://badge.fury.io/js/%40korkje%2Fadt.svg)](https://badge.fury.io/js/%40korkje%2Fadt)
 
@@ -12,27 +12,28 @@ TypeScript's enums are not very powerful, and they are often advised against for
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Creating a normal enum](#creating-a-normal-enum)
+  - [Emulating enums](#emulating-enums)
   - [Useful typing](#useful-typing)
   - [Matching variants](#matching-variants)
+  - [Default cases](#default-cases)
   - [Narrowing types](#narrowing-types)
-  - [Adding data to variants](#adding-data-to-variants)
+  - [Beyond enums](#beyond-enums)
   - [Nested variants](#nested-variants)
   - [Matching nested variants](#matching-nested-variants)
 
 ## Installation
 ```bash
-npm --save @korkje/adt
+npm install --save @korkje/adt
 ```
 
 ## Usage
 
-### Creating a normal enum
+### Emulating enums
 
 In the most simple case, `adt` can be used as a drop-in replacement for TypeScript's enums:
 
 ```typescript
-import adt, { empty } from '@korkje/adt';
+import adt, { empty } from "@korkje/adt";
 
 const power_status = adt({
     on: empty,
@@ -40,14 +41,14 @@ const power_status = adt({
 });
 ```
 
-In this case, `power_status`'s properties are the variants of the enum. The `empty` symbol is used to indicate that the variant has no associated data, as is the case with TypeScript's enums.
+In this case, `power_status`'s properties are the variants of the enum. The `empty` symbol is used to indicate that the variant has no associated data.
 
 ### Useful typing
 
 If you have a function that should return one of the variants, you can extract the union of the variants using the `Variants` type:
 
 ```typescript
-import type { Variants } from '@korkje/adt';
+import type { Variants } from "@korkje/adt";
 
 type PowerStatus = Variants<typeof power_status>;
 
@@ -62,13 +63,37 @@ const get_power_status = (): PowerStatus =>
 When you have a value of a variant, you can use the `match` function to determine which variant it is:
 
 ```typescript
-import { match } from '@korkje/adt';
+import { match } from "@korkje/adt";
 
 const current_power_status = get_power_status();
 
 match(current_power_status, {
-    on: () => console.log('The power is on'),
-    off: () => console.log('The power is off'),
+    on: () => console.log("The power is on"),
+    off: () => console.log("The power is off"),
+});
+```
+
+### Default cases
+
+If you want to handle all any unmatched variant, you can use the `def` symbol to specify a default case:
+
+```typescript
+const color = adt({
+    red: empty,
+    green: empty,
+    blue: empty,
+});
+
+const get_color = (): Variants<typeof color> => 
+    Math.random() > (2 / 3)
+        ? color.red
+        : Math.random() > 0.5
+            ? color.green
+            : color.blue;
+
+match(get_color(), {
+    red: () => console.log("red"),
+    [def]: () => console.log("blue or green"),
 });
 ```
 
@@ -99,9 +124,9 @@ match(current_power_status, {
 });
 ```
 
-### Adding data to variants
+### Beyond enums
 
-Where TypeScript's enums are limited to having no associated data, `adt` allows you to add data to variants by passing a "creator" function to the variant:
+Where TypeScript's enums are limited to encapsulating strings or numbers, `adt` allows you to associate arbitrary data with variants by providing "creator" functions:
 
 ```typescript
 const power_status = adt({
@@ -121,7 +146,7 @@ const U = match(current_power_status, {
 
 The type of `U` in this case is `number | null`.
 
-As it is the return type of the creator function that determines the type of the variant's associated data, you can get creative with it:
+As it is only the return type of the creator function that determines the type of the variant's associated data, you can get creative with it:
 
 ```typescript
 const power_status = adt({
@@ -141,7 +166,7 @@ const U = match(current_power_status, {
 
 ### Nested variants
 
-You can nest variants inside of variants:
+You can also nest variants inside of variants:
 
 ```typescript
 const ac_status = adt({
@@ -187,8 +212,8 @@ const U = match(get_power_source(), {
 `Option` is a type that can either be `some` or `none`. It is useful for representing the possibility of a value not existing.
 
 ```typescript
-import type { Option } from '@korkje/adt';
-import { some, none } from '@korkje/adt';
+import type { Option } from "@korkje/adt";
+import { some, none } from "@korkje/adt";
 
 const get_option = (): Option<number> => 
     Math.random() > 0.5
@@ -208,8 +233,8 @@ const value = match(option, {
 `Result` is a type that can either be `ok` or `err`. It is useful for representing the possibility of a function failing.
 
 ```typescript
-import type { Result } from '@korkje/adt';
-import { ok, err } from '@korkje/adt';
+import type { Result } from "@korkje/adt";
+import { ok, err } from "@korkje/adt";
 
 const get_result = (): Result<number, Error> => 
     Math.random() > 0.5
