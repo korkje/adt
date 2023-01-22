@@ -178,11 +178,11 @@ const U = match(get_power_source(), {
 });
 ```
 
-## `Option` and `Result`
+## Option and Result
 
 `adt` also exports two useful types: `Option` and `Result`. These are similar to Rust's `Option` and `Result` types.
 
-### `Option`
+### Option
 
 `Option` is a type that can either be `some` or `none`. It is useful for representing the possibility of a value not existing.
 
