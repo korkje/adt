@@ -1,6 +1,6 @@
 {
     "name": "@korkje/adt",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Rust-inspired fancy enums for TypeScript",
     "scripts": {
         "build": "tsc && vite build",
