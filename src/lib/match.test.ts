@@ -1,12 +1,12 @@
 import { test, expect } from "vitest";
 import match, { def } from "./match";
-import adt, { empty } from "./adt";
+import adt from "./adt";
 import type { Variants } from "./adt";
 
 test("Simple usage", () => {
     const foot = adt({
-        left: empty,
-        right: empty,
+        left: null,
+        right: null,
     });
 
     const left = foot.left;
@@ -29,8 +29,8 @@ test("Simple usage", () => {
 
 test("Simple usage with fallback", () => {
     const foot = adt({
-        left: empty,
-        right: empty,
+        left: null,
+        right: null,
     });
 
     type Foot = Variants<typeof foot>;
@@ -39,10 +39,10 @@ test("Simple usage with fallback", () => {
 
     const left_result = match(right, {
         left: () => "left",
-        [def]: () => "unknown",
+        [def]: () => "not left",
     });
 
-    expect(left_result).toBe("unknown");
+    expect(left_result).toBe("not left");
 });
 
 test("Advanced usage", () => {
@@ -73,8 +73,8 @@ test("Advanced usage", () => {
 
 test("Throw on unmatched variant", () => {
     const foot = adt({
-        left: empty,
-        right: empty,
+        left: null,
+        right: null,
     });
 
     type Foot = Variants<typeof foot>;

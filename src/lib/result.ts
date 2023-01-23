@@ -1,4 +1,5 @@
-import { ADT, tag, Variant, Variants } from "./adt";
+import { tag } from "./adt";
+import type { ADT, Variant, Variants } from "./adt";
 
 export type Result<T, E> = Variants<ADT<{
     ok: (value: T) => T;

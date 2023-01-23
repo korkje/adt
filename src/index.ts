@@ -1,7 +1,7 @@
 // ADT
-import adt, { tag, empty } from "./lib/adt";
+import adt, { tag } from "./lib/adt";
 import type { Variants } from "./lib/adt";
-export { adt, tag, empty, Variants };
+export { adt, tag, Variants };
 
 // Match
 import match from "./lib/match";

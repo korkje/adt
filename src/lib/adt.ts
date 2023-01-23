@@ -1,13 +1,10 @@
-export const empty = Symbol();
-export type Empty = typeof empty;
-
 export type Description = {
     [key: string]:
-    | Empty
+    | null
     | ((...args: any[]) => any);
 };
 
-export const tag = Symbol("discriminant");
+export const tag = "__tag__" // Symbol("discriminant");
 
 export type Variant<T, U> = {
     [tag]: T;
@@ -25,7 +22,7 @@ export type Out<T> =
     : never;
 
 export type ADT<T extends Description> = {
-    [K in keyof T]: T[K] extends Empty
+    [K in keyof T]: T[K] extends null
     ? Variant<K, T[K]>
     : (...args: In<T[K]>) => Variant<K, Out<T[K]>>;
 };
@@ -33,7 +30,7 @@ export type ADT<T extends Description> = {
 export type Variants<T> =
     T extends ADT<infer U>
     ? {
-        [K in keyof U]: U[K] extends Empty
+        [K in keyof U]: U[K] extends null
         ? Variant<K, U[K]>
         : Variant<K, Out<U[K]>>;
     }[keyof U]
@@ -42,8 +39,8 @@ export type Variants<T> =
 export const adt = <T extends Description>(desc: T) =>
     Object.entries(desc)
         .reduce((a, [key, value]) => Object.assign(a, {
-            [key]: value === empty
-                ? { [tag]: key, value: empty }
+            [key]: value === null
+                ? { [tag]: key, value: null }
                 : (...args: any[]) => ({
                     [tag]: key,
                     value: value(...args)

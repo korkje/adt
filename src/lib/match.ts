@@ -1,4 +1,5 @@
-import { Variant, tag, Out } from "./adt";
+import { tag } from "./adt";
+import type { Variant, Out } from "./adt";
 
 export type MatchAll<T extends Variant<string, any>> = {
     [K in T[typeof tag]]: T extends Variant<K, infer U>
@@ -10,7 +11,7 @@ export const def = Symbol("[def]ault");
 
 export type MatchSome<T extends Variant<string, any>> =
     Partial<MatchAll<T>> & {
-        [def]: (value: any) => any;
+        [def]: (value: T["value"]) => any,
     };
 
 export type Matchers<T extends Variant<string, any>> =

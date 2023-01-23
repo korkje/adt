@@ -1,17 +1,17 @@
 import { test, expect } from "vitest";
-import adt, { empty, tag } from "./adt";
+import adt, { tag } from "./adt";
 
 test("Simple usage", () => {
     const foot = adt({
-        left: empty,
-        right: empty,
+        left: null,
+        right: null,
     });
 
     const left = foot.left;
     const right = foot.right;
 
-    expect(left).toEqual({ [tag]: "left", value: empty });
-    expect(right).toEqual({ [tag]: "right", value: empty });
+    expect(left).toEqual({ [tag]: "left", value: null });
+    expect(right).toEqual({ [tag]: "right", value: null });
 });
 
 test("Advanced usage", () => {

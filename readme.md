@@ -36,19 +36,19 @@ npm install --save @korkje/adt
 In the most simple case, `adt` can be used as a drop-in replacement for TypeScript's enums:
 
 ```typescript
-import adt, { empty } from "@korkje/adt";
+import adt from "@korkje/adt";
 
 const power_status = adt({
-    on: empty,
-    off: empty,
+    on: null,
+    off: null,
 });
 ```
 
-In this case, `power_status`'s properties are the variants of the enum. The `empty` symbol is used to indicate that the variant has no associated data.
+In this case, `power_status`'s properties are the variants of the enum. The `null` primitive is used to indicate that the variant has no associated data. If you want to associate data with a variant, jump right to the fun part: [beyond enums](#beyond-enums).
 
 ### Useful typing
 
-If you have a function that should return one of the variants, you can extract the union of the variants using the `Variants` type:
+If you have a function that should return a variant, you can extract the union of the variants using the `Variants` type, which is useful if you want to set an explicit return type for the function:
 
 ```typescript
 import type { Variants } from "@korkje/adt";
@@ -82,17 +82,13 @@ If you want to handle all any unmatched variant, you can use the `def` symbol to
 
 ```typescript
 const color = adt({
-    red: empty,
-    green: empty,
-    blue: empty,
+    red: null,
+    green: null,
+    blue: null,
 });
 
-const get_color = (): Variants<typeof color> => 
-    Math.random() > (2 / 3)
-        ? color.red
-        : Math.random() > 0.5
-            ? color.green
-            : color.blue;
+const get_color = (): Variants<typeof color> =>
+    // ...
 
 match(get_color(), {
     red: () => console.log("red"),
@@ -134,7 +130,7 @@ Where TypeScript's enums are limited to encapsulating strings or numbers, `adt` 
 ```typescript
 const power_status = adt({
     on: (voltage: number) => voltage,
-    off: empty,
+    off: null,
 });
 ```
 
@@ -158,7 +154,7 @@ const power_status = adt({
         I: current,
         R: resistance,
     }),
-    off: empty,
+    off: null,
 });
 
 const U = match(current_power_status, {
@@ -167,14 +163,38 @@ const U = match(current_power_status, {
 });
 ```
 
+### Default with data
+
+If you use the `def` symbol to specify a default case when one or more variants have associated data, the parameter passed to the default case will be the associated data of the variant. The type of this parameter *should* naturally be the union of the types of associated data of all variants, except those that have explicit matchers.
+
+However, I have not yet found a way to express this in TypeScript, so the type of the parameter is currently the union of the types of associated data of all variants, *including* those that have explicit matchers:
+
+```typescript
+const housing = adt({
+    house: (floors: number, rooms: number) => ({ floors, rooms }),
+    apartment: (rooms: number) => number,
+    tent: null,
+});
+
+const get_housing = (): Variants<typeof housing> =>
+    // ...
+
+match(get_housing(), {
+    house: ({ floors, rooms }) => console.log(`House: ${floors} floors, ${rooms} rooms`),
+    [def]: value => console.log(value),
+});
+```
+
+In the above example, the type of `value` (in the default matcher) is `{ floors: number, rooms: number } | number | null`, even though the `house` variant has an explicit matcher, so in reality the type of `value` should be `number | null`. Anyway, let me know of any ideas on how to improve this!
+
 ### Nested variants
 
-You can also nest variants inside of variants:
+You can also nest variants inside one another:
 
 ```typescript
 const ac_status = adt({
     on: (voltage: number) => voltage,
-    off: empty,
+    off: null,
 });
 
 type ACStatus = Variants<typeof ac_status>;

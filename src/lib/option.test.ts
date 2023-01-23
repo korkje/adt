@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import type Option from "./option";
 import { some, none } from "./option";
-import { empty, tag } from "./adt";
+import { tag } from "./adt";
 import match from "./match";
 
 test("Simple usage", () => {
@@ -9,7 +9,7 @@ test("Simple usage", () => {
     const none_result = none as Option<number>;
 
     expect(some_result).toEqual({ [tag]: "some", value: 10 });
-    expect(none_result).toEqual({ [tag]: "none", value: empty });
+    expect(none_result).toEqual({ [tag]: "none", value: null });
 });
 
 test("Usage with match", () => {
