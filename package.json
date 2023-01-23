@@ -2,6 +2,7 @@
     "name": "@korkje/adt",
     "version": "0.1.5",
     "description": "Rust-inspired fancy enums for TypeScript",
+    "license": "MIT",
     "scripts": {
         "build": "tsc && vite build",
         "prepublish": "npm run build",

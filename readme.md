@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This package attempts to bring a version of Rust's "fancy enums" to TypeScript. These are referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, or variants. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
+This package attempts to bring a version of Rust's fancy enums to TypeScript. These are sometimes referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
 
 TypeScript's enums are not very powerful, and they are often advised against for various reasons. Rust's enums are much more powerful, and can be used to represent a wide variety of data structures. This package attempts to bring some of that power to TypeScript.
 
@@ -24,6 +24,7 @@ TypeScript's enums are not very powerful, and they are often advised against for
 - [Option and Result](#option-and-result)
   - [Option](#option)
   - [Result](#result)
+- [License](#license)
 
 ## Installation
 ```bash
@@ -64,7 +65,7 @@ const get_power_status = (): PowerStatus =>
 
 ### Matching variants
 
-When you have a value of a variant, you can use the `match` function to determine which variant it is:
+When you've got your hands on a variant, you can use the `match` function to determine which one it is:
 
 ```typescript
 import { match } from "@korkje/adt";
@@ -79,7 +80,7 @@ match(current_power_status, {
 
 ### Default cases
 
-If you want to handle all any unmatched variant, you can use the `def` symbol to specify a default case:
+If you want, you can omit one or more cases and specify a default case instead:
 
 ```typescript
 const color = adt({
@@ -275,3 +276,7 @@ const value = match(result, {
     },
 });
 ```
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
