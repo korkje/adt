@@ -18,6 +18,7 @@ TypeScript's enums are not very powerful, and they are often advised against for
   - [Default cases](#default-cases)
   - [Narrowing types](#narrowing-types)
   - [Beyond enums](#beyond-enums)
+  - [Default with data](#default-with-data)
   - [Nested variants](#nested-variants)
   - [Matching nested variants](#matching-nested-variants)
 - [Option and Result](#option-and-result)
