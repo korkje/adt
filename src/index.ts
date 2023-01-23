@@ -3,19 +3,27 @@ import adt, { tag } from "./lib/adt";
 import type { Variants } from "./lib/adt";
 export { adt, tag, Variants };
 
-// Match
+// if_let
+import if_let from "./lib/if_let";
+export { if_let };
+
+// match
 import match from "./lib/match";
 export { match };
-
-// Result
-import type Result from "./lib/result";
-import { ok, err } from "./lib/result";
-export { Result, ok, err };
 
 // Option
 import type Option from "./lib/option";
 import { some, none } from "./lib/option";
 export { Option, some, none };
 
-// Default
+// Result
+import type Result from "./lib/result";
+import { ok, err } from "./lib/result";
+export { Result, ok, err };
+
+// unwrap
+import { expect, unwrap, unwrap_or, unwrap_or_else } from "./lib/unwrap";
+export { expect, unwrap, unwrap_or, unwrap_or_else };
+
+// default
 export default adt;

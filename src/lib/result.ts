@@ -6,10 +6,30 @@ export type Result<T, E> = Variants<ADT<{
     err: (error: E) => E;
 }>>;
 
-export const ok = <T,>(value: T): Variant<"ok", T> =>
+/**
+ * Creates a new 'ok' variant.
+ *
+ * @param value
+ * The value to wrap in the variant.
+ *
+ * @returns
+ * The new variant.
+ */
+export const ok = <T>(value: T): Variant<"ok", T> =>
     ({ [tag]: "ok", value });
 
-export const err = <E,>(value: E): Variant<"err", E> =>
-    ({ [tag]: "err", value });
+/**
+ * Creates a new 'err' variant.
+ *
+ * @param error
+ * The value to wrap in the variant.
+ *
+ * @returns
+ * The new variant.
+ */
+export const err = <E>(error: E): Variant<"err", E> =>
+    ({ [tag]: "err", value: error });
+
+export const result = { ok, err };
 
 export default Result;

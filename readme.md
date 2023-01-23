@@ -1,7 +1,5 @@
 # [a]lgebraic [d]ata [t]ypes
 
-[![npm version](https://badge.fury.io/js/%40korkje%2Fadt.svg)](https://badge.fury.io/js/%40korkje%2Fadt)
-
 ## Introduction
 
 This package attempts to bring a version of Rust's fancy enums to TypeScript. These are sometimes referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
@@ -24,6 +22,9 @@ TypeScript's enums are not very powerful, and they are often advised against for
 - [Option and Result](#option-and-result)
   - [Option](#option)
   - [Result](#result)
+- [Additional helpers](#additional-helpers)
+  - [if_let](#if_let)
+  - [unwrap (and friends)](#unwrap-and-friends)
 - [License](#license)
 
 ## Installation
@@ -46,7 +47,7 @@ const power_status = adt({
 });
 ```
 
-In this case, `power_status`'s properties are the variants of the enum. The `null` primitive is used to indicate that the variant has no associated data. If you want to associate data with a variant, jump right to the fun part: [beyond enums](#beyond-enums).
+In this case, `power_status`' properties are the variants of the enum. The `null` primitive is used to indicate that the variant has no associated data. If you want to associate data with a variant, jump right to the fun part: [beyond enums](#beyond-enums).
 
 ### Useful typing
 
@@ -275,6 +276,56 @@ const value = match(result, {
         return null;
     },
 });
+```
+
+## Additional helpers
+
+### if_let
+
+`if_let` is a helper function inspired by Rust's [if let](https://doc.rust-lang.org/rust-by-example/flow_control/if_let.html), that can be used to match a variant and call a function with the associated data if the variant matches:
+
+```typescript
+import { if_let } from "@korkje/adt";
+
+if_let(get_power_source(), "battery", voltage => {
+    console.log(`Battery voltage: ${voltage}`);
+});
+```
+
+### unwrap (and friends)
+
+`unwrap`, `expect`, `unwrap_or` and `unwrap_or_else` are helper functions inspired by those exposed by the `Option` and `Result` types in Rust. Similarly, these work on the previously mentioned `Option` and `Result` types. The purpose of these functions is to extract the associated data from a variant, or (in some cases) to throw an error if the variant is `none` or `err`.
+
+`unwrap` simply extracts the associated data from a variant if it is `some` or `ok`, or throws an error if it is `none` or `err`:
+
+```typescript
+import { unwrap } from "@korkje/adt";
+
+const value = unwrap(get_option());
+```
+
+`expect` is similar to `unwrap`, but it also takes a message as it's second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
+
+```typescript
+import { expect } from "@korkje/adt";
+
+const value = expect(get_option(), "No value!");
+```
+
+`unwrap_or` is also similar to `unwrap`, but it takes a default value as it's second argument, which is returned if the variant is `none` or `err`:
+
+```typescript
+import { unwrap_or } from "@korkje/adt";
+
+const value = unwrap_or(get_option(), 0);
+```
+
+`unwrap_or_else` is similar to `unwrap_or`, but it takes a function as it's second argument, which is used to construct the default value if the variant is `none` or `err`:
+
+```typescript
+import { unwrap_or_else } from "@korkje/adt";
+
+const value = unwrap_or_else(get_option(), () => 0);
 ```
 
 ## License
