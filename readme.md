@@ -47,7 +47,29 @@ else if (ip.kind === "V6") {
 
 This is both more verbose, and a lot less ergonomic.
 
-TypeScript's enums are not very powerful, and they are often advised against for various reasons, while Rust's enums are extremely powerful, and can be used to represent a wide variety of data structures in a compact and developer friendly way. This package attempts to bring some of that power to TypeScript.
+TypeScript's enums are not very powerful, and they are often advised against for various reasons, while Rust's enums are extremely powerful, and can be used to represent a wide variety of data structures in a compact and developer friendly way. My goal with this package is to bring some of that power to TypeScript.
+
+With the exported `adt` and `match` functions, you'll be able to achieve (among other things) the above functionality in TypeScript, like this:
+
+```typescript
+import adt, { match } from "@korkje/adt";
+
+const ip = adt({
+    v4: [number, number, number, number],
+    v6: string,
+});
+
+type Ip = Variants<typeof ip>;
+
+const ip = ip.v4(127, 0, 0, 1) as Ip;
+
+match(ip, {
+    v4: (a, b, c, d) => console.log(`${a}.${b}.${c}.${d}`),
+    v6: s => console.log(s),
+});
+```
+
+This is only scratching the surface of what you can do with algebraic data types. If this sounds interesting to you, read on!
 
 ## Table of contents
 - [Introduction](#introduction)
