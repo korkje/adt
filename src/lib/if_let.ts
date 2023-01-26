@@ -16,13 +16,13 @@ import type { Variant } from "./adt";
  */
 export const if_let = <
     T extends Variant<string, any>,
-    U extends T[typeof tag],
-    V extends T extends Variant<U, infer X>
-        ? X
+    K extends T[typeof tag],
+    V extends T extends Variant<K, infer U>
+        ? U
         : never,
 >(
     variant: T,
-    kind: U,
+    kind: K,
     callback: (value: V) => void,
 ) => {
     if (variant[tag] === kind) {

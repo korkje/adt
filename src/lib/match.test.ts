@@ -9,8 +9,10 @@ test("Simple usage", () => {
         right: null,
     });
 
-    const left = foot.left;
-    const right = foot.right;
+    type Foot = Variants<typeof foot>;
+
+    const left = foot.left as Foot;
+    const right = foot.right as Foot;
 
     const left_result = match(left, {
         left: () => "left",

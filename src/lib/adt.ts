@@ -1,4 +1,4 @@
-export type Description = {
+type Description = {
     [key: string]:
     | null
     | ((...args: any[]) => any);
@@ -15,12 +15,12 @@ export type Variant<T, U> = {
     value: U;
 };
 
-export type In<T> =
+type In<T> =
     T extends (...args: infer U) => any
     ? U
     : never;
 
-export type Out<T> =
+type Out<T> =
     T extends (...args: any[]) => infer U
     ? U
     : never;
@@ -59,13 +59,13 @@ export type Variants<T> =
     : never;
 
 /**
- * Creates an ADT from a description object.
+ * Creates an ADT instantiator from a description object.
  *
  * @param desc
  * The description object.
  *
  * @returns
- * The ADT.
+ * The ADT instantiator.
  *
  * @example
  * const ip = adt({

@@ -1,11 +1,5 @@
 import { tag } from "./adt";
-import type { Variant, Out } from "./adt";
-
-export type MatchAll<T extends Variant<string, any>> = {
-    [K in T[typeof tag]]: T extends Variant<K, infer U>
-    ? (value: U) => any
-    : never;
-};
+import type { Variant } from "./adt";
 
 /**
  * Symbol used to specify a default matcher.
@@ -14,14 +8,26 @@ export type MatchAll<T extends Variant<string, any>> = {
  */
 export const def = Symbol("[def]ault");
 
-export type MatchSome<T extends Variant<string, any>> =
-    Partial<MatchAll<T>> & {
-        [def]: (value: T["value"]) => any,
-    };
+type MatchFor<T extends Variant<string, any>, K extends PropertyKey> = {
+    [_K in K]: (value: Extract<T, { [tag]: _K }>["value"]) => any;
+};
 
-export type Matchers<T extends Variant<string, any>> =
-    | MatchAll<T>
-    | MatchSome<T>
+type Matchers<T extends Variant<string, any>, K extends PropertyKey> =
+    Exclude<T[typeof tag], K> extends never
+    ? (MatchFor<T, K>)
+    : (MatchFor<T, K> & {
+        [def]: (value: Exclude<T, { [tag]: K }>["value"]) => any;
+    });
+
+type MatchAll<T extends Variant<string, any>> = Matchers<T, T[typeof tag]>;
+
+type Out<M, K extends string> = Exclude<K, keyof M> extends never
+    ? M extends {
+        [_K in K]: (value: any) => infer R;
+    } ? R : never
+    : M extends {
+        [key: string | symbol]: (value: any) => infer R;
+    } ? R : never;
 
 /**
  * Matches a variant against a set of matchers.
@@ -54,18 +60,36 @@ export type Matchers<T extends Variant<string, any>> =
  *     blue: () => "blue",
  * });
  */
-export const match = <
+
+// Covers all cases:
+export function match<
     T extends Variant<string, any>,
-    M extends Matchers<T>,
->(variant: T, matchers: M) => {
-    const matcher = matchers[variant[tag] as keyof M]
-        ?? (matchers as MatchSome<T>)[def];
+    K extends PropertyKey,
+    M extends Matchers<T, K>,
+>(
+    variant: T,
+    matchers: M | Matchers<T, K>| MatchAll<T>
+): Out<M, T[typeof tag]>;
+
+// All matchers specified:
+export function match<
+    T extends Variant<string, any>,
+    M extends MatchAll<T>,
+>(
+    variant: T,
+    matchers: M | MatchAll<T>
+): Out<M, T[typeof tag]>;
+
+// Implementation:
+export function match(variant: any, matchers: any) {
+    // @ts-ignore
+    const matcher = matchers[variant[tag]] ?? matchers[def];
 
     if (matcher === undefined) {
         throw new Error(`no matcher for ${variant[tag]}!`);
     }
 
-    return matcher(variant.value) as Out<M[keyof M]>;
+    return matcher(variant.value);
 };
 
 export default match;

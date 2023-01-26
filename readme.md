@@ -168,9 +168,7 @@ const U = match(current_power_status, {
 
 ### Default with data
 
-If you use the `def` symbol to specify a default case when one or more variants have associated data, the parameter passed to the default case will be the associated data of the variant. The type of this parameter *should* naturally be the union of the types of associated data of all variants, except those that have explicit matchers.
-
-However, I have not yet found a way to express this in TypeScript, so the type of the parameter is currently the union of the types of associated data of all variants, *including* those that have explicit matchers:
+If you use the `def` symbol to specify a default case when one or more variants have associated data, the parameter passed to the default case will be correctly typed as the union of the associated data types that don't have explicit matchers:
 
 ```typescript
 const housing = adt({
@@ -188,7 +186,7 @@ match(get_housing(), {
 });
 ```
 
-In the above example, the type of `value` (in the default matcher) is `{ floors: number, rooms: number } | number | null`, even though the `house` variant has an explicit matcher, so in reality the type of `value` should be `number | null`. Anyway, let me know of any ideas on how to improve this!
+In the above example, the type of `value` (in the default matcher) will be correctly inferred as `number | null`. Notice that `null` is included in the inferred type, even though the `tent` variant has no associated data. This is because variants with no associated data have a value of `null`.
 
 ### Nested variants
 
