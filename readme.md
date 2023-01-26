@@ -4,7 +4,50 @@
 
 This package attempts to bring a version of Rust's fancy enums to TypeScript. These are sometimes referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
 
-TypeScript's enums are not very powerful, and they are often advised against for various reasons. Rust's enums are much more powerful, and can be used to represent a wide variety of data structures. This package attempts to bring some of that power to TypeScript.
+In Rust, you can use enums like this:
+
+```rust
+enum Ip {
+    V4(u8, u8, u8, u8),
+    V6(String),
+}
+
+let ip = Ip::V4(127, 0, 0, 1);
+
+match ip {
+    Ip::V4(a, b, c, d) => println!("{}.{}.{}.{}", a, b, c, d),
+    Ip::V6(s) => println!("{}", s),
+}
+```
+
+While you can't do this using enums in TypeScript, you could do something like this:
+
+```typescript
+type Ip = {
+    kind: "V4",
+    value: [number, number, number, number],
+} | {
+    kind: "V6",
+    value: string,
+};
+
+const ip = {
+    kind: "V4",
+    value: [127, 0, 0, 1],
+} as Ip;
+
+if (ip.kind === "V4") {
+    const [a, b, c, d] = ip.value;
+    console.log(`${a}.${b}.${c}.${d}`);
+}
+else if (ip.kind === "V6") {
+    console.log(ip.value);
+}
+```
+
+This is both more verbose, and a lot less ergonomic.
+
+TypeScript's enums are not very powerful, and they are often advised against for various reasons, while Rust's enums are extremely powerful, and can be used to represent a wide variety of data structures in a compact and developer friendly way. This package attempts to bring some of that power to TypeScript.
 
 ## Table of contents
 - [Introduction](#introduction)
