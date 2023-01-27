@@ -24,11 +24,11 @@ While you can't do this using enums in TypeScript, you could do something like t
 
 ```typescript
 type Ip = {
-    kind: "V4",
-    value: [number, number, number, number],
+    kind: "V4";
+    value: [number, number, number, number];
 } | {
-    kind: "V6",
-    value: string,
+    kind: "V6";
+    value: string;
 };
 
 const ip = {
@@ -36,12 +36,22 @@ const ip = {
     value: [127, 0, 0, 1],
 } as Ip;
 
-if (ip.kind === "V4") {
-    const [a, b, c, d] = ip.value;
-    console.log(`${a}.${b}.${c}.${d}`);
-}
-else if (ip.kind === "V6") {
-    console.log(ip.value);
+const assertNever = (value: never): never => {
+    throw new Error(`Unexpected object: ${value}`);
+};
+
+switch (ip.kind) {
+    case "V4":
+        const [a, b, c, d] = ip.value;
+        console.log(`${a}.${b}.${c}.${d}`);
+        break;
+    case "V6":
+        console.log(ip.value);
+        break;
+    default:
+        // Makes sure all cases are covered
+        assertNever(ip);
+        break;
 }
 ```
 
@@ -55,8 +65,8 @@ With the exported `adt` and `match` functions, you'll be able to achieve (among 
 import adt, { match } from "@korkje/adt";
 
 const ip = adt({
-    v4: [number, number, number, number],
-    v6: string,
+    v4: (a: number, b: number, c: number, d: number) => [a, b, c, d],
+    v6: (s: string) => s,
 });
 
 type Ip = Variants<typeof ip>;

@@ -68,7 +68,7 @@ export function match<
     M extends Matchers<T, K>,
 >(
     variant: T,
-    matchers: M | Matchers<T, K>| MatchAll<T>
+    matchers: M | Matchers<T, K> | MatchAll<T>
 ): Out<M, T[typeof tag]>;
 
 // All matchers specified:
