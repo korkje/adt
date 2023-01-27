@@ -10,25 +10,19 @@ type Description = {
  */
 export const tag = "__tag__" // Symbol("discriminant");
 
-export type Variant<T, U> = {
-    [tag]: T;
-    value: U;
+export type Variant<K, V> = {
+    [tag]: K;
+    value: V;
 };
 
-type In<T> =
-    T extends (...args: infer U) => any
-    ? U
-    : never;
+type In<F> = F extends (...args: infer P) => any ? P : never;
 
-type Out<T> =
-    T extends (...args: any[]) => infer U
-    ? U
-    : never;
+type Out<F> = F extends (...args: any[]) => infer R ? R : never;
 
-export type ADT<T extends Description> = {
-    [K in keyof T]: T[K] extends null
-    ? Variant<K, T[K]>
-    : (...args: In<T[K]>) => Variant<K, Out<T[K]>>;
+export type ADT<D extends Description> = {
+    [K in keyof D]: D[K] extends null
+        ? Variant<K, D[K]>
+        : (...args: In<D[K]>) => Variant<K, Out<D[K]>>;
 };
 
 /**
@@ -49,14 +43,11 @@ export type ADT<T extends Description> = {
  *
  * type Color = Variants<typeof color>;
  */
-export type Variants<T> =
-    T extends ADT<infer U>
-    ? {
-        [K in keyof U]: U[K] extends null
-        ? Variant<K, U[K]>
-        : Variant<K, Out<U[K]>>;
-    }[keyof U]
-    : never;
+export type Variants<A> = A extends ADT<infer D> ? {
+    [K in keyof D]: D[K] extends null
+        ? Variant<K, D[K]>
+        : Variant<K, Out<D[K]>>;
+}[keyof D] : never;
 
 /**
  * Creates an ADT instantiator from a description object.
@@ -78,7 +69,7 @@ export type Variants<T> =
  * const v4 = ip.v4(127, 0, 0, 1);
  * const v6 = ip.v6("::1");
  */
-export const adt = <T extends Description>(desc: T) =>
+export const adt = <D extends Description>(desc: D) =>
     Object.entries(desc)
         .reduce((a, [key, value]) => Object.assign(a, {
             [key]: value === null
@@ -87,6 +78,6 @@ export const adt = <T extends Description>(desc: T) =>
                     [tag]: key,
                     value: value(...args)
                 })
-        }), {}) as ADT<T>;
+        }), {}) as ADT<D>;
 
 export default adt;

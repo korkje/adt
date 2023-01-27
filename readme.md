@@ -1,4 +1,4 @@
-# [a]lgebraic [d]ata [t]ypes
+# <u>a</u>lgebraic <u>d</u>ata <u>t</u>ypes
 
 ## Introduction
 
