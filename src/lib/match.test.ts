@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import match, { def } from "./match";
-import adt from "./adt";
+import adt, { tag } from "./adt";
 import type { Variants } from "./adt";
 
 test("Simple usage", () => {
@@ -71,6 +71,122 @@ test("Advanced usage", () => {
     });
 
     expect(attack_result).toBe("attack(enemy)");
+});
+
+test("Nested usage", () => {
+    const direction = adt({
+        left: null,
+        right: null,
+    });
+
+    type Direction = Variants<typeof direction>;
+
+    const command = adt({
+        move: (direction: Direction, distance: number) => ({ direction, distance }),
+        attack: (target: string) => target,
+        jump: null,
+    });
+
+    type Command = Variants<typeof command>;
+
+    const move = command.move(direction.right, 10) as Command;
+
+    const move_result_0 = match(move, {
+        move: ({ direction, distance }) => match(direction, {
+            [def]: () => `move(${direction[tag]}, ${distance})`,
+        }),
+        attack: target => `attack(${target})`,
+        jump: () => "jump",
+    });
+
+    expect(move_result_0).toBe("move(right, 10)");
+
+    const move_result_1 = match(move, {
+        move: ({ direction, distance }) => match(direction, {
+            left: () => `move(left, ${distance})`,
+            right: () => `move(right, ${distance})`,
+        }),
+        attack: target => `attack(${target})`,
+        jump: () => "jump",
+    });
+
+    expect(move_result_1).toBe("move(right, 10)");
+});
+
+test("Nested usage, special syntax", () => {
+    const power_source = adt({
+        battery: (voltage: number) => voltage,
+        ac: {
+            on: (voltage: number) => voltage,
+            off: null,
+        },
+    });
+
+    type PowerSource = Variants<typeof power_source>;
+
+    const battery = power_source.battery(12) as PowerSource;
+    const ac_on = power_source.ac.on(230) as PowerSource;
+    const ac_off = power_source.ac.off as PowerSource;
+
+    const battery_result = match(battery, {
+        battery: charge => `battery(${charge})`,
+        ac: (status) => match(status, {
+            on: voltage => `ac.on(${voltage})`,
+            off: () => "ac.off",
+        }),
+    });
+
+    expect(battery_result).toBe("battery(12)");
+
+    const ac_on_result = match(ac_on, {
+        battery: charge => `battery(${charge})`,
+        ac: (status) => match(status, {
+            on: voltage => `ac.on(${voltage})`,
+            off: () => "ac.off",
+        }),
+    });
+
+    expect(ac_on_result).toBe("ac.on(230)");
+
+    const ac_off_result = match(ac_off, {
+        battery: charge => `battery(${charge})`,
+        ac: (status) => match(status, {
+            on: voltage => `ac.on(${voltage})`,
+            off: () => "ac.off",
+        }),
+    });
+
+    expect(ac_off_result).toBe("ac.off");
+});
+
+test("Deeply nested usage", () => {
+    const activity = adt({
+        idle: null,
+        moving: {
+            running: {
+                sprinting: null,
+                jogging: null,
+            },
+            driving: null,
+        },
+    });
+
+    type Activity = Variants<typeof activity>;
+
+    const sprinting = activity.moving.running.sprinting as Activity;
+
+    const sprinting_result = match(sprinting, {
+        idle: () => "idle",
+        moving: (mode) => match(mode, {
+            running: (intensity) => match(intensity, {
+                sprinting: () => "sprinting",
+                jogging: () => "jogging",
+            }),
+            driving: () => "driving",
+        }),
+    });
+
+    expect(sprinting_result).toBe("sprinting");
 });
 
 test("Throw on unmatched variant", () => {

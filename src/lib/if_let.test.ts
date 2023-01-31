@@ -41,3 +41,35 @@ test("Advanced usage", () => {
 
     expect(matcher).not.toBeCalled();
 });
+
+test("Nested usage", () => {
+    const ac_status = adt({
+        on: null,
+        off: null,
+    });
+
+    type ACStatus = Variants<typeof ac_status>;
+
+    const power_source = adt({
+        battery: (voltage: number) => voltage,
+        ac: (status: ACStatus, voltage: number) => ({ status, voltage }),
+    });
+
+    type PowerSource = Variants<typeof power_source>;
+
+    const ac_on = power_source.ac(ac_status.on, 230) as PowerSource;
+
+    const outer = vi.fn();
+
+    if_let(ac_on, "ac", outer);
+
+    expect(outer).toBeCalledWith({ status: ac_status.on, voltage: 230 });
+
+    const inner = vi.fn();
+
+    if_let(ac_on, "ac", ({ status }) => {
+        if_let(status, "on", inner);
+    });
+
+    expect(inner).toBeCalledWith(null);
+});

@@ -92,8 +92,9 @@ This is only scratching the surface of what you can do with algebraic data types
   - [Narrowing types](#narrowing-types)
   - [Beyond enums](#beyond-enums)
   - [Default with data](#default-with-data)
-  - [Nested variants](#nested-variants)
-  - [Matching nested variants](#matching-nested-variants)
+  - [Nested ADTs](#nested-adts)
+  - [Matching nested ADTs](#matching-nested-adts)
+  - [Going deeper](#going-deeper)
 - [Option and Result](#option-and-result)
   - [Option](#option)
   - [Result](#result)
@@ -263,9 +264,9 @@ match(get_housing(), {
 
 In the above example, the type of `value` (in the default matcher) will be correctly inferred as `number | null`. Notice that `null` is included in the inferred type, even though the `tent` variant has no associated data. This is because variants with no associated data have a value of `null`.
 
-### Nested variants
+### Nested ADTs
 
-You can also nest variants inside one another:
+You can also nest ADTs inside one another:
 
 ```typescript
 const ac_status = adt({
@@ -288,9 +289,44 @@ const get_power_source = (): PowerSource =>
         : power_source.ac(ac_status.on(230));
 ```
 
-### Matching nested variants
+For a simple case like this, there is support for a simpler syntax:
 
-Using the `match` function, decoding nested variants is a breeze:
+```typescript
+const power_source = adt({
+    battery: (voltage: number) => voltage,
+    ac: {
+        on: (voltage: number) => voltage,
+        off: null,
+    },
+});
+
+type PowerSource = Variants<typeof power_source>;
+
+const get_power_source = (): PowerSource => 
+    Math.random() > 0.5
+        ? power_source.battery(12)
+        : power_source.ac.on(230);
+```
+
+However, in the following example, the simpler syntax would not work, because the `ac` variant's associated data isn't *only* a nested ADT:
+
+```typescript
+const ac_status = adt({
+    on: null,
+    off: null,
+});
+
+type ACStatus = Variants<typeof ac_status>;
+
+const power_source = adt({
+    battery: (voltage: number) => voltage,
+    ac: (status: ACStatus, voltage: number) => ({ status, voltage }),
+});
+```
+
+### Matching nested ADTs
+
+Using the `match` function, decoding nested ADTs is a breeze:
 
 ```typescript
 const U = match(get_power_source(), {
@@ -300,6 +336,55 @@ const U = match(get_power_source(), {
         off: () => null,
     }),
 });
+```
+
+One could envision a more concise syntax for this, in line with the simpler syntax for creating nested ADTs, but I am already stretching the capabilities of the type system (and my brain) as it is.
+
+Anyway, something like this would be nice:
+
+```typescript
+const U = match(get_power_source(), {
+    battery: voltage => voltage,
+    // Does NOT work, but would be nice:
+    ac: { // <-- this is the only difference
+        on: voltage => voltage,
+        off: () => null,
+    },
+});
+```
+
+### Going deeper
+
+You can go as deep as you want with nested ADTs:
+
+```typescript
+const activity = adt({
+    idle: null,
+    moving: {
+        running: {
+            sprinting: null,
+            jogging: null,
+        },
+        driving: null,
+    },
+});
+
+type Activity = Variants<typeof activity>;
+
+const my_activity = activity.moving.running.sprinting as Activity;
+
+const res = match(sprinting, {
+    idle: () => "idle",
+    moving: (mode) => match(mode, {
+        running: (intensity) => match(intensity, {
+            sprinting: () => "sprinting",
+            jogging: () => "jogging",
+        }),
+        driving: () => "driving",
+    }),
+});
+
+console.log(res); // "sprinting"
 ```
 
 ## Option and Result
