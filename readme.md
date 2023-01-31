@@ -74,7 +74,7 @@ type Ip = Variants<typeof ip>;
 const ip = ip.v4(127, 0, 0, 1) as Ip;
 
 match(ip, {
-    v4: (a, b, c, d) => console.log(`${a}.${b}.${c}.${d}`),
+    v4: ([a, b, c, d]) => console.log(`${a}.${b}.${c}.${d}`),
     v6: s => console.log(s),
 });
 ```
