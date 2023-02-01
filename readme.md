@@ -95,6 +95,7 @@ This is only scratching the surface of what you can do with algebraic data types
   - [Nested ADTs](#nested-adts)
   - [Matching nested ADTs](#matching-nested-adts)
   - [Going deeper](#going-deeper)
+  - [Linked list](#linked-list)
 - [Option and Result](#option-and-result)
   - [Option](#option)
   - [Result](#result)
@@ -385,6 +386,31 @@ const res = match(sprinting, {
 });
 
 console.log(res); // "sprinting"
+```
+
+### Linked list
+
+If you want to create a more complex ADT that for instance needs to be recursive and/or generic, you could do this without using the `adt` function at all, using the `Variant` type and the `variant` function:
+
+```typescript
+import { variant, match } from "@korkje/adt";
+import type { Variant } from "@korkje/adt";
+
+type LL<T> =
+    | Variant<"nil", null>
+    | Variant<"cons", readonly [T, LL<T>]>;
+
+const nil = variant("nil", null);
+const cons = <T>(h: T, t: LL<T>) => variant("cons", [h, t] as const);
+
+const list: LL<number> = cons(1, cons(2, cons(3, nil)));
+
+const ll_to_arr = <T>(ll: LL<T>): T[] => match(ll, {
+    nil: () => [],
+    cons: ([h, t]) => [h, ...ll_to_arr(t)],
+});
+
+console.log(ll_to_arr(list)); // [1, 2, 3]
 ```
 
 ## Option and Result

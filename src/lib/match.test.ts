@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import match, { def } from "./match";
-import adt, { tag } from "./adt";
-import type { Variants } from "./adt";
+import adt, { tag, variant } from "./adt";
+import type { Variants, Variant } from "./adt";
 
 test("Simple usage", () => {
     const foot = adt({
@@ -187,6 +187,24 @@ test("Deeply nested usage", () => {
     });
 
     expect(sprinting_result).toBe("sprinting");
+});
+
+test("Linked list", () => {
+    type LL<T> =
+        | Variant<"nil", null>
+        | Variant<"cons", readonly [T, LL<T>]>;
+
+    const nil = variant("nil", null);
+    const cons = <T>(h: T, t: LL<T>) => variant("cons", [h, t] as const);
+
+    const my_ll: LL<number> = cons(1, cons(2, cons(3, nil)));
+
+    const ll_to_arr = <T>(ll: LL<T>): T[] => match(ll, {
+        nil: () => [],
+        cons: ([h, t]) => [h, ...ll_to_arr(t)],
+    });
+
+    expect(ll_to_arr(my_ll)).toEqual([1, 2, 3]);
 });
 
 test("Throw on unmatched variant", () => {

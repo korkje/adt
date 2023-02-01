@@ -1,7 +1,7 @@
 // ADT
-import adt, { tag } from "./lib/adt";
-import type { Variants } from "./lib/adt";
-export { adt, tag, Variants };
+import adt, { tag, variant } from "./lib/adt";
+import type { Variant, Variants } from "./lib/adt";
+export { adt, tag, variant, Variant, Variants };
 
 // if_let
 import if_let from "./lib/if_let";

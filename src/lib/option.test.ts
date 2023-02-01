@@ -32,3 +32,21 @@ test("Usage with match", () => {
 
     expect(none_result).toBe("none");
 });
+
+test("Linked list", () => {
+    type LL<T> = Option<[T, LL<T>]>;
+
+    const list: LL<number> = some([10, some([20, some([30, none])])]);
+
+    const ll_to_arr = (ll: LL<number>): number[] => match(ll, {
+        some: ([ head, tail ]) => [head, ...ll_to_arr(tail)],
+        none: () => [],
+    });
+
+    expect(ll_to_arr(list)).toEqual([10, 20, 30]);
+
+    const arr_to_ll = (arr: number[]): LL<number> =>
+        arr.length > 0 ? some([arr[0], arr_to_ll(arr.slice(1))]) : none;
+
+    expect(arr_to_ll([10, 20, 30])).toEqual(list);
+});

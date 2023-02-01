@@ -98,3 +98,49 @@ test("Deeply nested usage", () => {
         },
     });
 });
+
+test("Linked list", () => {
+    type Cons<T> = {
+        head: T;
+        tail: List<T>;
+    };
+
+    const ll = <T>() => adt({
+        nil: null,
+        cons: (arg: Cons<T>) => arg,
+    });
+
+    type List<T> = Variants<ReturnType<typeof ll<T>>>;
+
+    const lln = ll<number>();
+
+    const my_list = lln.cons({ head: 1, tail: lln.cons({ head: 2, tail: lln.nil })});
+
+    // Iterate the linked list:
+    let current = my_list as List<number>;
+    const values: number[] = [];
+
+    while (current[tag] !== "nil") {
+        values.push(current.value.head);
+        current = current.value.tail;
+    }
+
+    expect(values).toEqual([1, 2]);
+
+    expect(my_list).toEqual({
+        [tag]: "cons",
+        value: {
+            head: 1,
+            tail: {
+                [tag]: "cons",
+                value: {
+                    head: 2,
+                    tail: {
+                        [tag]: "nil",
+                        value: null,
+                    },
+                },
+            },
+        },
+    });
+});

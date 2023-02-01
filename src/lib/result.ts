@@ -1,34 +1,31 @@
-import { tag } from "./adt";
-import type { ADT, Variant, Variants } from "./adt";
+import { variant } from "./adt";
+import type { Variant } from "./adt";
 
-export type Result<T, E> = Variants<ADT<{
-    ok: (value: T) => T;
-    err: (error: E) => E;
-}>>;
+export type Result<T, E> =
+    | Variant<"ok", T>
+    | Variant<"err", E>;
 
 /**
  * Creates a new 'ok' variant.
  *
  * @param value
- * The value to wrap in the variant.
+ * The value to wrap.
  *
  * @returns
  * The new variant.
  */
-export const ok = <T>(value: T): Variant<"ok", T> =>
-    ({ [tag]: "ok", value });
+export const ok = <T>(value: T) => variant("ok", value);
 
 /**
  * Creates a new 'err' variant.
  *
  * @param error
- * The value to wrap in the variant.
+ * The value to wrap.
  *
  * @returns
  * The new variant.
  */
-export const err = <E>(error: E): Variant<"err", E> =>
-    ({ [tag]: "err", value: error });
+export const err = <E>(error: E) => variant("err", error);
 
 export const result = { ok, err };
 

@@ -1,31 +1,25 @@
-import { tag } from "./adt";
-import type { ADT, Variant, Variants } from "./adt";
+import { variant } from "./adt";
+import type { Variant } from "./adt";
 
-export type Option<T> = Variants<ADT<{
-    some: (value: T) => T;
-    none: null;
-}>>;
+export type Option<T> =
+    | Variant<"some", T>
+    | Variant<"none", null>;
 
 /**
  * Creates a new 'some' variant.
  *
  * @param value
- * The value to wrap in the variant.
+ * The value to wrap.
  *
  * @returns
  * The new variant.
  */
-export const some = <T>(value: T): Variant<"some", T> =>
-    ({ [tag]: "some", value });
+export const some = <T>(value: T) => variant("some", value);
 
 /**
- * Creates a new 'none' variant.
- *
- * @returns
- * The new variant.
+ * *Is* the 'none' variant.
  */
-export const none: Variant<"none", null> =
-    ({ [tag]: "none", value: null });
+export const none = variant("none", null);
 
 export const option = { some, none };
 

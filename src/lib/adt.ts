@@ -61,6 +61,11 @@ export type Variants<A> = A extends ADT<infer D> ? {
             : Variant<Str<K>, Out<D[K]>>;
 }[keyof D] : never;
 
+export const variant = <K extends string, V>(key: K, value: V): Variant<K, V> => ({ [tag]: key, value });
+
+const wrap = (value: any, keys: string[]) =>
+    keys.reduceRight((a, k) => ({ [tag]: k, value: a }), value);
+
 /**
  * Creates an ADT instantiator from a description object.
  *
@@ -90,14 +95,11 @@ export function adt<D extends Description>(desc: D, wrap_keys: string[] = []): A
                 : typeof value === "function"
                     ? (...args: any[]) => wrap({
                         [tag]: key,
-                        value: value(...args)
+                        value: value(...args),
                     }, wrap_keys)
                     // @ts-ignore
                     : adt(value, [...wrap_keys, key])
         }), {}) as ADT<D>;
 };
-
-const wrap = (value: any, keys: string[]) =>
-    keys.reduceRight((a, k) => ({ [tag]: k, value: a }), value);
 
 export default adt;
