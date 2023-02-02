@@ -1,15 +1,14 @@
 import { test, expect } from "vitest";
 import type Result from "./result";
 import { ok, err } from "./result";
-import { tag } from "./adt";
 import match from "./match";
 
 test("Simple usage", () => {
     const ok_result = ok(10) as Result<number, string>;
     const err_result = err("error") as Result<number, string>;
 
-    expect(ok_result).toEqual({ [tag]: "ok", value: 10 });
-    expect(err_result).toEqual({ [tag]: "err", value: "error" });
+    expect(ok_result).toEqual({ tag: "ok", value: 10 });
+    expect(err_result).toEqual({ tag: "err", value: "error" });
 });
 
 test("Usage with match", () => {

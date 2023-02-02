@@ -1,4 +1,3 @@
-import { tag } from "./adt";
 import type Option from "./option";
 import type Result from "./result";
 
@@ -22,7 +21,7 @@ export const expect = <T>(
     variant: Option<T> | Result<T, any>,
     message: string
 ): T => {
-    if (["some", "ok"].includes(variant[tag])) {
+    if (["some", "ok"].includes(variant.tag)) {
         return variant.value;
     }
 
@@ -44,11 +43,11 @@ export const expect = <T>(
 export const unwrap = <T>(
     variant: Option<T> | Result<T, any>
 ): T => {
-    if (["some", "ok"].includes(variant[tag])) {
+    if (["some", "ok"].includes(variant.tag)) {
         return variant.value;
     }
 
-    throw new Error(`Variant was '${variant[tag]}'!`);
+    throw new Error(`Variant was '${variant.tag}'!`);
 }
 
 /**
@@ -67,7 +66,7 @@ export const unwrap_or = <T>(
     variant: Option<T> | Result<T, any>,
     fallback: T
 ): T => {
-    if (["some", "ok"].includes(variant[tag])) {
+    if (["some", "ok"].includes(variant.tag)) {
         return variant.value;
     }
 
@@ -91,7 +90,7 @@ export const unwrap_or_else = <T>(
     variant: Option<T> | Result<T, any>,
     fallback: () => T
 ): T => {
-    if (["some", "ok"].includes(variant[tag])) {
+    if (["some", "ok"].includes(variant.tag)) {
         return variant.value;
     }
 

@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 import match, { def } from "./match";
-import adt, { tag, variant } from "./adt";
+import adt, { variant } from "./adt";
 import type { Variants, Variant } from "./adt";
 
 test("Simple usage", () => {
@@ -93,7 +93,7 @@ test("Nested usage", () => {
 
     const move_result_0 = match(move, {
         move: ({ direction, distance }) => match(direction, {
-            [def]: () => `move(${direction[tag]}, ${distance})`,
+            [def]: () => `move(${direction.tag}, ${distance})`,
         }),
         attack: target => `attack(${target})`,
         jump: () => "jump",

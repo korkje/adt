@@ -1,31 +1,30 @@
-import { tag } from "./adt";
 import type { Variant } from "./adt";
 
 /**
- * Calls a callback if a variant is of a specific kind.
+ * Calls a callback if a variant matches a specific tag.
  *
  * @param variant
  * The variant to check.
  *
- * @param kind
- * The kind to check for.
+ * @param tag
+ * The tag to check for.
  *
  * @param callback
- * The callback to call if the variant is of the specified kind. The value of
+ * The callback to call if the variant has the specified tag. The value of
  * the variant is passed to the callback.
  */
 export const if_let = <
-    T extends Variant<string, any>,
-    K extends T[typeof tag],
-    V extends T extends Variant<K, infer U>
+    V extends Variant<string, any>,
+    T extends V["tag"],
+    U extends V extends Variant<T, infer U>
         ? U
         : never,
 >(
-    variant: T,
-    kind: K,
-    callback: (value: V) => void,
+    variant: V,
+    tag: T,
+    callback: (value: U) => void,
 ) => {
-    if (variant[tag] === kind) {
+    if (variant.tag === tag) {
         callback(variant.value);
     }
 };

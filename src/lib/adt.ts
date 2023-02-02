@@ -1,18 +1,12 @@
 type Description = {
-    [key: string]:
+    [tag: string]:
     | null
     | ((...args: any[]) => any)
     | Description;
 };
 
-/**
- * The tag used internally to identify variants. It is not a symbol, because
- * they don't survive serialization.
- */
-export const tag = "__tag__" // Symbol("discriminant");
-
-export type Variant<K extends string, V> = {
-    [tag]: K;
+export type Variant<T extends string, V> = {
+    tag: T;
     value: V;
 };
 
@@ -23,11 +17,11 @@ type Str<T> = T extends string ? T : never;
 type StrArr<T> = T extends string[] ? T : never;
 
 export type ADT<D extends Description, W extends string[] = []> = {
-    [K in keyof D]: D[K] extends null
-        ? Wrap<Variant<Str<K>, D[K]>, W>
-        : D[K] extends Description
-            ? ADT<D[K], [...W, Str<K>]>
-            : (...args: In<D[K]>) => Wrap<Variant<Str<K>, Out<D[K]>>, W>;
+    [T in keyof D]: D[T] extends null
+        ? Wrap<Variant<Str<T>, D[T]>, W>
+        : D[T] extends Description
+            ? ADT<D[T], [...W, Str<T>]>
+            : (...args: In<D[T]>) => Wrap<Variant<Str<T>, Out<D[T]>>, W>;
 };
 
 type Wrap<V extends Variant<string, any>, W extends string[]> =
@@ -54,17 +48,17 @@ type Wrap<V extends Variant<string, any>, W extends string[]> =
  * type Color = Variants<typeof color>;
  */
 export type Variants<A> = A extends ADT<infer D> ? {
-    [K in keyof D]: D[K] extends null
-        ? Variant<Str<K>, D[K]>
-        : D[K] extends Description
-            ? Variant<Str<K>, Variants<ADT<D[K]>>>
-            : Variant<Str<K>, Out<D[K]>>;
+    [T in keyof D]: D[T] extends null
+        ? Variant<Str<T>, D[T]>
+        : D[T] extends Description
+            ? Variant<Str<T>, Variants<ADT<D[T]>>>
+            : Variant<Str<T>, Out<D[T]>>;
 }[keyof D] : never;
 
-export const variant = <K extends string, V>(key: K, value: V): Variant<K, V> => ({ [tag]: key, value });
+export const variant = <T extends string, V>(tag: T, value: V): Variant<T, V> => ({ tag, value });
 
-const wrap = (value: any, keys: string[]) =>
-    keys.reduceRight((a, k) => ({ [tag]: k, value: a }), value);
+const wrap = (value: any, tags: string[]) =>
+    tags.reduceRight((value, tag) => variant(tag, value), value);
 
 /**
  * Creates an ADT instantiator from a description object.
@@ -87,18 +81,15 @@ const wrap = (value: any, keys: string[]) =>
  * const v6 = ip.v6("::1");
  */
 export function adt<D extends Description>(desc: D): ADT<D>;
-export function adt<D extends Description>(desc: D, wrap_keys: string[] = []): ADT<D> {
+export function adt<D extends Description>(desc: D, tags: string[] = []): ADT<D> {
     return Object.entries(desc)
-        .reduce((a, [key, value]) => Object.assign(a, {
-            [key]: value === null
-                ? wrap({ [tag]: key, value: null }, wrap_keys)
+        .reduce((a, [tag, value]) => Object.assign(a, {
+            [tag]: value === null
+                ? wrap(variant(tag, null), tags)
                 : typeof value === "function"
-                    ? (...args: any[]) => wrap({
-                        [tag]: key,
-                        value: value(...args),
-                    }, wrap_keys)
+                    ? (...args: any[]) => wrap(variant(tag, value(...args)), tags)
                     // @ts-ignore
-                    : adt(value, [...wrap_keys, key])
+                    : adt(value, [...tags, tag])
         }), {}) as ADT<D>;
 };
 

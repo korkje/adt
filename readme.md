@@ -24,15 +24,15 @@ While you can't do this using enums in TypeScript, you could do something like t
 
 ```typescript
 type Ip = {
-    kind: "V4";
+    tag: "V4";
     value: [number, number, number, number];
 } | {
-    kind: "V6";
+    tag: "V6";
     value: string;
 };
 
 const my_ip = {
-    kind: "V4",
+    tag: "V4",
     value: [127, 0, 0, 1],
 } as Ip;
 
@@ -40,7 +40,7 @@ const assertNever = (value: never): never => {
     throw new Error(`Unexpected object: ${value}`);
 };
 
-switch (my_ip.kind) {
+switch (my_ip.tag) {
     case "V4":
         const [a, b, c, d] = my_ip.value;
         console.log(`${a}.${b}.${c}.${d}`);
