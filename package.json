@@ -2,6 +2,10 @@
     "name": "@korkje/adt",
     "version": "0.3.2",
     "description": "Rust-inspired fancy enums for TypeScript",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/korkje/adt.git"
+    },
     "license": "MIT",
     "scripts": {
         "build": "tsc && vite build",
