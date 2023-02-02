@@ -1,4 +1,7 @@
-# <u>a</u>lgebraic <u>d</u>ata <u>t</u>ypes
+# algebraic data types
+
+[![npm](https://img.shields.io/npm/v/@korkje/adt)](https://www.npmjs.com/package/@korkje/adt)
+[![NPM](https://img.shields.io/npm/l/@korkje/adt)](https://choosealicense.com/licenses/mit/)
 
 ## Introduction
 
