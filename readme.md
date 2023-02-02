@@ -12,9 +12,9 @@ enum Ip {
     V6(String),
 }
 
-let ip = Ip::V4(127, 0, 0, 1);
+let my_ip = Ip::V4(127, 0, 0, 1);
 
-match ip {
+match my_ip {
     Ip::V4(a, b, c, d) => println!("{}.{}.{}.{}", a, b, c, d),
     Ip::V6(s) => println!("{}", s),
 }
@@ -31,7 +31,7 @@ type Ip = {
     value: string;
 };
 
-const ip = {
+const my_ip = {
     kind: "V4",
     value: [127, 0, 0, 1],
 } as Ip;
@@ -40,17 +40,17 @@ const assertNever = (value: never): never => {
     throw new Error(`Unexpected object: ${value}`);
 };
 
-switch (ip.kind) {
+switch (my_ip.kind) {
     case "V4":
-        const [a, b, c, d] = ip.value;
+        const [a, b, c, d] = my_ip.value;
         console.log(`${a}.${b}.${c}.${d}`);
         break;
     case "V6":
-        console.log(ip.value);
+        console.log(my_ip.value);
         break;
     default:
         // Makes sure all cases are covered
-        assertNever(ip);
+        assertNever(my_ip);
         break;
 }
 ```
@@ -71,9 +71,9 @@ const ip = adt({
 
 type Ip = Variants<typeof ip>;
 
-const ip = ip.v4(127, 0, 0, 1) as Ip;
+const my_ip = ip.v4(127, 0, 0, 1) as Ip;
 
-match(ip, {
+match(my_ip, {
     v4: ([a, b, c, d]) => console.log(`${a}.${b}.${c}.${d}`),
     v6: s => console.log(s),
 });
