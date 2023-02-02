@@ -491,7 +491,7 @@ import { unwrap } from "@korkje/adt";
 const value = unwrap(get_option());
 ```
 
-`expect` is similar to `unwrap`, but it also takes a message as it's second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
+`expect` is similar to `unwrap`, but it also takes a message as its second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
 
 ```typescript
 import { expect } from "@korkje/adt";
@@ -499,7 +499,7 @@ import { expect } from "@korkje/adt";
 const value = expect(get_option(), "No value!");
 ```
 
-`unwrap_or` is also similar to `unwrap`, but it takes a default value as it's second argument, which is returned if the variant is `none` or `err`:
+`unwrap_or` is also similar to `unwrap`, but it takes a default value as its second argument, which is returned if the variant is `none` or `err`:
 
 ```typescript
 import { unwrap_or } from "@korkje/adt";
@@ -507,7 +507,7 @@ import { unwrap_or } from "@korkje/adt";
 const value = unwrap_or(get_option(), 0);
 ```
 
-`unwrap_or_else` is similar to `unwrap_or`, but it takes a function as it's second argument, which is used to construct the default value if the variant is `none` or `err`:
+`unwrap_or_else` is similar to `unwrap_or`, but it takes a function as its second argument, which is used to construct the default value if the variant is `none` or `err`:
 
 ```typescript
 import { unwrap_or_else } from "@korkje/adt";
