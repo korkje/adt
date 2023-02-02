@@ -63,6 +63,7 @@ With the exported `adt` and `match` functions, you'll be able to achieve (among 
 
 ```typescript
 import adt, { match } from "@korkje/adt";
+import type { Variants } from "@korkje/adt";
 
 const ip = adt({
     v4: (a: number, b: number, c: number, d: number) => [a, b, c, d],

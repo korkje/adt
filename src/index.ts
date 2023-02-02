@@ -1,8 +1,7 @@
 // ADT
 import adt, { variant } from "./lib/adt";
 import type { Variant, Variants } from "./lib/adt";
-export { adt, variant };
-export type { Variant, Variants };
+export { adt, variant, Variant, Variants };
 
 // if_let
 import if_let from "./lib/if_let";
@@ -15,14 +14,12 @@ export { match };
 // Option
 import type Option from "./lib/option";
 import { some, none } from "./lib/option";
-export type { Option };
-export { some, none };
+export { Option, some, none };
 
 // Result
 import type Result from "./lib/result";
 import { ok, err } from "./lib/result";
-export type { Result };
-export { ok, err };
+export { Result, ok, err };
 
 // unwrap
 import { expect, unwrap, unwrap_or, unwrap_or_else } from "./lib/unwrap";
