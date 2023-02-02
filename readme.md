@@ -1,7 +1,7 @@
 # algebraic data types
 
 [![npm](https://img.shields.io/npm/v/@korkje/adt)](https://www.npmjs.com/package/@korkje/adt)
-[![NPM](https://img.shields.io/npm/l/@korkje/adt)](https://choosealicense.com/licenses/mit/)
+[![NPM](https://img.shields.io/github/license/korkje/adt)](license.md)
 
 ## Introduction
 
@@ -106,7 +106,6 @@ This is only scratching the surface of what you can do with algebraic data types
 - [Additional helpers](#additional-helpers)
   - [if_let](#if_let)
   - [unwrap (and friends)](#unwrap-and-friends)
-- [License](#license)
 
 ## Installation
 ```bash
@@ -515,7 +514,3 @@ import { unwrap_or_else } from "@korkje/adt";
 
 const value = unwrap_or_else(get_option(), () => 0);
 ```
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
