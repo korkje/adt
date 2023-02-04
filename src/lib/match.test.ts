@@ -73,6 +73,37 @@ test("Advanced usage", () => {
     expect(attack_result).toBe("attack(enemy)");
 });
 
+test("Extract matched variant", () => {
+    const command = adt({
+        move: (x: number, y: number) => ({ x, y }),
+        attack: (target: string) => target,
+    });
+
+    type Command = Variants<typeof command>;
+
+    const move = command.move(10, 20) as Command;
+
+    const move_result = match(move, {
+        move: ({ x, y }, variant) => {
+            expect(variant).toBe(move);
+            return `move(${x}, ${y})`;
+        },
+        attack: target => `attack(${target})`,
+    });
+
+    expect(move_result).toBe("move(10, 20)");
+
+    const default_result = match(move, {
+        [def]: (value, variant) => {
+            expect(variant.tag).toBe("move");
+            expect(variant.value).toEqual({ x: 10, y: 20 });
+            return value;
+        },
+    });
+
+    expect(default_result).toBe(move.value);
+});
+
 test("Nested usage", () => {
     const direction = adt({
         left: null,

@@ -228,6 +228,19 @@ const U = match(current_power_status, {
 
 The type of `U` in this case is `number | null`.
 
+The variant itself is passed to the matching function as a second argument, if you need it:
+
+```typescript
+const U = match(current_power_status, {
+    on: (_, variant) => variant,
+    off: () => null,
+});
+
+console.log(U.value); // 230
+```
+
+In this case, the type of `U` is `Variant<"on", number> | null`, where `Variant<"on", number>` is an alias for `{ tag: "on", value: number }`, which is the actual representation of a variant of an ADT in this library.
+
 As it is only the return type of the creator function that determines the type of the variant's associated data, you can get creative with it:
 
 ```typescript
@@ -251,6 +264,9 @@ const U = match(current_power_status, {
 If you use the `def` symbol to specify a default case when one or more variants have associated data, the parameter passed to the default case will be correctly typed as the union of the associated data types that don't have explicit matchers:
 
 ```typescript
+import adt, { match, def } from "@korkje/adt";
+import type { Variants } from "@korkje/adt";
+
 const housing = adt({
     house: (floors: number, rooms: number) => ({ floors, rooms }),
     apartment: (rooms: number) => number,

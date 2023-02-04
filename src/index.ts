@@ -8,8 +8,8 @@ import if_let from "./lib/if_let";
 export { if_let };
 
 // match
-import match from "./lib/match";
-export { match };
+import match, { def } from "./lib/match";
+export { match, def };
 
 // Option
 import type Option from "./lib/option";

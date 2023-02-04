@@ -8,24 +8,30 @@ import type { Variant } from "./adt";
 export const def = Symbol("[def]ault");
 
 type MatchFor<T extends Variant<string, any>, K extends PropertyKey> = {
-    [_K in K]: (value: Extract<T, { tag: _K }>["value"]) => any;
+    [_K in K]: (
+        value: Extract<T, { tag: _K }>["value"],
+        variant: Extract<T, { tag: _K }>,
+    ) => any;
 };
 
 type Matchers<T extends Variant<string, any>, K extends PropertyKey> =
     Exclude<T["tag"], K> extends never
     ? (MatchFor<T, K>)
     : (MatchFor<T, K> & {
-        [def]: (value: Exclude<T, { tag: K }>["value"]) => any;
+        [def]: (
+            value: Exclude<T, { tag: K }>["value"],
+            variant: Exclude<T, { tag: K }>,
+        ) => any;
     });
 
 type MatchAll<T extends Variant<string, any>> = Matchers<T, T["tag"]>;
 
 type Out<M, K extends string> = Exclude<K, keyof M> extends never
     ? M extends {
-        [_K in K]: (value: any) => infer R;
+        [_K in K]: (...args: any[]) => infer R;
     } ? R : never
     : M extends {
-        [key: string | symbol]: (value: any) => infer R;
+        [key: string | symbol]: (...args: any[]) => infer R;
     } ? R : never;
 
 /**
@@ -88,7 +94,7 @@ export function match(variant: any, matchers: any) {
         throw new Error(`no matcher for ${variant.tag}!`);
     }
 
-    return matcher(variant.value);
+    return matcher(variant.value, variant);
 };
 
 export default match;
