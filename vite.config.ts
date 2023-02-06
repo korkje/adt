@@ -9,7 +9,11 @@ export default defineConfig({
             name: "adt",
             fileName: (format, entry) => `${entry}.${format}.js`,
             formats: ["es", "umd"],
-
+        },
+        rollupOptions: {
+            output: {
+                exports: "named",
+            },
         },
     },
     plugins: [dts()],
