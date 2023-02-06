@@ -5,7 +5,7 @@
 
 ## Introduction
 
-This package attempts to bring a version of Rust's fancy enums to TypeScript. These are sometimes referred to as algebraic data types (which is where the name of this package comes from), tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
+This package attempts to bring Rust's fancy enums (and associated pattern matching) to TypeScript. These are sometimes referred to as algebraic data types, tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
 
 In Rust, you can use enums like this:
 
@@ -23,7 +23,7 @@ match my_ip {
 }
 ```
 
-While you can't do this using enums in TypeScript, you could do something like this:
+While you can't do this using enums in TypeScript, you can still take advantage of algebraic data types like so:
 
 ```typescript
 type Ip = {
@@ -58,9 +58,7 @@ switch (my_ip.tag) {
 }
 ```
 
-This is both more verbose, and a lot less ergonomic.
-
-TypeScript's enums are not very powerful, and they are often advised against for various reasons, while Rust's enums are extremely powerful, and can be used to represent a wide variety of data structures in a compact and developer friendly way. My goal with this package is to bring some of that power to TypeScript.
+This is both more verbose, and a lot less ergonomic. That goes for typing the ADT, instantiating variants, matching them, and making sure you've covered all cases. This package aims to solve that.
 
 With the exported `adt` and `match` functions, you'll be able to achieve (among other things) the above functionality in TypeScript, like this:
 
@@ -144,6 +142,8 @@ const get_power_status = (): PowerStatus =>
         : power_status.off;
 ```
 
+The variants themseves are intentionally not typed as the union of all variants, which is useful in a lot of cases. For instance, you might want to implicitly narrow the return type of a function based on only the variant or variants it can return.
+
 ### Matching variants
 
 When you've got your hands on a variant, you can use the `match` function to determine which one it is:
@@ -179,7 +179,29 @@ match(get_color(), {
 });
 ```
 
-The `match` function also returns the result of the function that matched the variant:
+As briefly mentioned above, if you don't explicitly type the return type of a function using `Variants`, it will be the narrowed to only the relevant variants. Say you have a function that returns a `red` or `green` variant:
+
+```typescript
+const get_color = () => 
+    Math.random() > 0.5
+        ? color.red
+        : color.green;
+```
+
+In this case, the return type of the function is inferred as only the red or green variant, and the `match` function will not expect a `blue` case:
+
+```typescript
+match(get_color(), {
+    red: () => console.log("red"),
+    green: () => console.log("green"),
+    // Not allowed:
+    // blue: () => console.log("blue"),
+});
+```
+
+So, if you want to use `Variants` or not will depend on your use case. You might want to ensure that all possible variants of the ADT are handled, in case your function changes in the future, or you might want to narrow the return type of the function to only the relevant variants.
+
+Like in Rust, `match` also returns the result of the function that matched the variant:
 
 ```typescript
 const is_on = match(current_power_status, {

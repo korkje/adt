@@ -7,8 +7,9 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, "src/index.ts"),
             name: "adt",
-            fileName: "index",
-            formats: ["es"],
+            fileName: (format, entry) => `${entry}.${format}.js`,
+            formats: ["es", "umd"],
+
         },
     },
     plugins: [dts()],
