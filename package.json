@@ -1,6 +1,6 @@
 {
     "name": "@korkje/adt",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "Rust-inspired fancy enums for TypeScript",
     "repository": {
         "type": "git",
