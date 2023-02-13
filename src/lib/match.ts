@@ -1,5 +1,3 @@
-import type { Variant } from "./adt";
-
 /**
  * Symbol used to specify a default matcher.
  *
@@ -7,24 +5,24 @@ import type { Variant } from "./adt";
  */
 export const def = Symbol("[def]ault");
 
-type MatchFor<T extends Variant<string, any>, K extends PropertyKey> = {
+type MatchFor<T extends [string, any], K extends PropertyKey> = {
     [_K in K]: (
-        value: Extract<T, { tag: _K }>["value"],
-        variant: Extract<T, { tag: _K }>,
+        value: Extract<T, [_K, any]>[1],
+        variant: Extract<T, [_K, any]>,
     ) => any;
 };
 
-type Matchers<T extends Variant<string, any>, K extends PropertyKey> =
-    Exclude<T["tag"], K> extends never
+type Matchers<T extends [string, any], K extends PropertyKey> =
+    Exclude<T[0], K> extends never
     ? (MatchFor<T, K>)
     : (MatchFor<T, K> & {
         [def]: (
-            value: Exclude<T, { tag: K }>["value"],
-            variant: Exclude<T, { tag: K }>,
+            value: Exclude<T, [K, any]>[1],
+            variant: Exclude<T, [K, any]>,
         ) => any;
     });
 
-type MatchAll<T extends Variant<string, any>> = Matchers<T, T["tag"]>;
+type MatchAll<T extends [string, any]> = Matchers<T, T[0]>;
 
 type Out<M, K extends string> = Exclude<K, keyof M> extends never
     ? M extends {
@@ -68,33 +66,33 @@ type Out<M, K extends string> = Exclude<K, keyof M> extends never
 
 // Covers all cases:
 export function match<
-    T extends Variant<string, any>,
+    T extends [string, any],
     K extends PropertyKey,
     M extends Matchers<T, K>,
 >(
     variant: T,
     matchers: M | Matchers<T, K> | MatchAll<T>,
-): Out<M, T["tag"]>;
+): Out<M, T[0]>;
 
 // All matchers specified:
 export function match<
-    T extends Variant<string, any>,
+    T extends [string, any],
     M extends MatchAll<T>,
 >(
     variant: T,
     matchers: M | MatchAll<T>,
-): Out<M, T["tag"]>;
+): Out<M, T[0]>;
 
 // Implementation:
 export function match(variant: any, matchers: any) {
     // @ts-ignore
-    const matcher = matchers[variant.tag] ?? matchers[def];
+    const matcher = matchers[variant[0]] ?? matchers[def];
 
     if (matcher === undefined) {
-        throw new Error(`no matcher for ${variant.tag}!`);
+        throw new Error(`no matcher for ${variant[0]}!`);
     }
 
-    return matcher(variant.value, variant);
+    return matcher(variant[1], variant);
 };
 
 export default match;

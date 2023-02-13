@@ -1,9 +1,8 @@
 import { variant } from "./adt";
-import type { Variant } from "./adt";
 
 export type Result<T, E> =
-    | Variant<"ok", T>
-    | Variant<"err", E>;
+    | ["ok", T]
+    | ["err", E];
 
 /**
  * Creates a new 'ok' variant.

@@ -1,5 +1,3 @@
-import type { Variant } from "./adt";
-
 /**
  * Calls a callback if a variant matches a specific tag.
  *
@@ -14,9 +12,9 @@ import type { Variant } from "./adt";
  * the variant is passed to the callback.
  */
 export const if_let = <
-    V extends Variant<string, any>,
-    T extends V["tag"],
-    U extends V extends Variant<T, infer U>
+    V extends [string, any],
+    T extends V[0],
+    U extends V extends [T, infer U]
         ? U
         : never,
 >(
@@ -24,8 +22,8 @@ export const if_let = <
     tag: T,
     callback: (value: U) => void,
 ) => {
-    if (variant.tag === tag) {
-        callback(variant.value);
+    if (variant[0] === tag) {
+        callback(variant[1]);
     }
 };
 

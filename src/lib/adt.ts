@@ -5,11 +5,6 @@ type Description = {
     | Description;
 };
 
-export type Variant<T extends string, V> = {
-    tag: T;
-    value: V;
-};
-
 type In<F> = F extends (...args: infer P) => any ? P : never;
 type Out<F> = F extends (...args: any[]) => infer R ? R : never;
 
@@ -18,15 +13,15 @@ type StrArr<T> = T extends string[] ? T : never;
 
 export type ADT<D extends Description, W extends string[] = []> = {
     [T in keyof D]: D[T] extends null
-        ? Wrap<Variant<Str<T>, D[T]>, W>
+        ? Wrap<[Str<T>, D[T]], W>
         : D[T] extends Description
             ? ADT<D[T], [...W, Str<T>]>
-            : (...args: In<D[T]>) => Wrap<Variant<Str<T>, Out<D[T]>>, W>;
+            : (...args: In<D[T]>) => Wrap<[Str<T>, Out<D[T]>], W>;
 };
 
-type Wrap<V extends Variant<string, any>, W extends string[]> =
+type Wrap<V extends [string, any], W extends string[]> =
     W extends [...infer H, infer T]
-        ? Wrap<Variant<Str<T>, V>, StrArr<H>>
+        ? Wrap<[Str<T>, V], StrArr<H>>
         : V;
 
 /**
@@ -49,13 +44,13 @@ type Wrap<V extends Variant<string, any>, W extends string[]> =
  */
 export type Variants<A> = A extends ADT<infer D> ? {
     [T in keyof D]: D[T] extends null
-        ? Variant<Str<T>, D[T]>
+        ? [Str<T>, D[T]]
         : D[T] extends Description
-            ? Variant<Str<T>, Variants<ADT<D[T]>>>
-            : Variant<Str<T>, Out<D[T]>>;
+            ? [Str<T>, Variants<ADT<D[T]>>]
+            : [Str<T>, Out<D[T]>];
 }[keyof D] : never;
 
-export const variant = <T extends string, V>(tag: T, value: V): Variant<T, V> => ({ tag, value });
+export const variant = <T extends string, V>(tag: T, value: V) => [tag, value] as [T, V];
 
 const wrap = (value: any, tags: string[]) =>
     tags.reduceRight((value, tag) => variant(tag, value), value);

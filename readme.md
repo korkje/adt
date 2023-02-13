@@ -261,7 +261,7 @@ const U = match(current_power_status, {
 console.log(U.value); // 230
 ```
 
-In this case, the type of `U` is `Variant<"on", number> | null`, where `Variant<"on", number>` is an alias for `{ tag: "on", value: number }`, which is the actual representation of a variant of an ADT in this library.
+In this case, the type of `U` is `["on", number] | null`, where `["on", number]` is the a variant with tag `"on"` and value `number`. More generically, the tuple `[T, V]` is the internal representation a variant with tag `T` and value `V`. A tuple is used instead of an object (e.g. on the form `{ tag: T, value: V }`) simply to reduce serialization size.
 
 As it is only the return type of the creator function that determines the type of the variant's associated data, you can get creative with it:
 
@@ -431,15 +431,14 @@ console.log(res); // "sprinting"
 
 ### Linked list
 
-If you want to create a more complex ADT that for instance needs to be recursive and/or generic, you could do this without using the `adt` function at all, using the `Variant` type and the `variant` function:
+If you want to create a more complex ADT that for instance needs to be recursive and/or generic, you could do this without using the `adt` function at all:
 
 ```typescript
 import { variant, match } from "@korkje/adt";
-import type { Variant } from "@korkje/adt";
 
 type LL<T> =
-    | Variant<"nil", null>
-    | Variant<"cons", readonly [T, LL<T>]>;
+    | ["nil", null]
+    | ["cons", readonly [T, LL<T>]];
 
 const nil = variant("nil", null);
 const cons = <T>(h: T, t: LL<T>) => variant("cons", [h, t] as const);

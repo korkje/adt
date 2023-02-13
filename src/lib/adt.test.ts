@@ -10,8 +10,8 @@ test("Simple usage", () => {
     const left = foot.left;
     const right = foot.right;
 
-    expect(left).toEqual({ tag: "left", value: null });
-    expect(right).toEqual({ tag: "right", value: null });
+    expect(left).toEqual(["left", null]);
+    expect(right).toEqual(["right", null]);
 });
 
 test("Advanced usage", () => {
@@ -23,15 +23,9 @@ test("Advanced usage", () => {
     const move = command.move(10, 20);
     const attack = command.attack("enemy");
 
-    expect(move).toEqual({
-        tag: "move",
-        value: { x: 10, y: 20 },
-    });
+    expect(move).toEqual(["move", { x: 10, y: 20 }]);
 
-    expect(attack).toEqual({
-        tag: "attack",
-        value: "enemy",
-    });
+    expect(attack).toEqual(["attack", "enemy"]);
 });
 
 test("Nested usage", () => {
@@ -51,26 +45,21 @@ test("Nested usage", () => {
     const ac_off = power_source.ac(ac_status.off, 230);
     const battery = power_source.battery(12);
 
-    expect(ac_on).toEqual({
-        tag: "ac",
-        value: {
-            status: { tag: "on", value: null },
+    expect(ac_on).toEqual([
+        "ac", {
+            status: ["on", null],
             voltage: 230,
         },
-    });
+    ]);
 
-    expect(ac_off).toEqual({
-        tag: "ac",
-        value: {
-            status: { tag: "off", value: null },
+    expect(ac_off).toEqual([
+        "ac", {
+            status: ["off", null],
             voltage: 230,
         },
-    });
+    ]);
 
-    expect(battery).toEqual({
-        tag: "battery",
-        value: 12,
-    });
+    expect(battery).toEqual(["battery", 12]);
 });
 
 test("Deeply nested usage", () => {
@@ -87,16 +76,14 @@ test("Deeply nested usage", () => {
 
     const my_activity = activity.moving.running.sprinting;
 
-    expect(my_activity).toEqual({
-        tag: "moving",
-        value: {
-            tag: "running",
-            value: {
-                tag: "sprinting",
-                value: null,
-            },
-        },
-    });
+    expect(my_activity).toEqual([
+        "moving", [
+            "running", [
+                "sprinting",
+                null,
+            ],
+        ],
+    ]);
 });
 
 test("Linked list", () => {
@@ -120,27 +107,22 @@ test("Linked list", () => {
     let current = my_list as List<number>;
     const values: number[] = [];
 
-    while (current.tag !== "nil") {
-        values.push(current.value.head);
-        current = current.value.tail;
+    while (current[0] !== "nil") {
+        values.push(current[1].head);
+        current = current[1].tail;
     }
 
     expect(values).toEqual([1, 2]);
 
-    expect(my_list).toEqual({
-        tag: "cons",
-        value: {
+    expect(my_list).toEqual([
+        "cons", {
             head: 1,
-            tail: {
-                tag: "cons",
-                value: {
+            tail: [
+                "cons", {
                     head: 2,
-                    tail: {
-                        tag: "nil",
-                        value: null,
-                    },
+                    tail: ["nil", null],
                 },
-            },
+            ],
         },
-    });
+    ]);
 });
