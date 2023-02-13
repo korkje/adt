@@ -1,6 +1,6 @@
 {
     "name": "@korkje/adt",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "description": "Rust-inspired fancy enums for TypeScript",
     "repository": {
         "type": "git",
@@ -24,5 +24,7 @@
     "main": "dist/index.umd.js",
     "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
-    "files": ["dist"]
+    "files": [
+        "dist"
+    ]
 }
