@@ -85,14 +85,15 @@ export function match<
 
 // Implementation:
 export function match(variant: any, matchers: any) {
-    // @ts-ignore
-    const matcher = matchers[variant[0]] ?? matchers[def];
+    const [tag, value] = variant;
+
+    const matcher = matchers[tag] ?? matchers[def];
 
     if (matcher === undefined) {
-        throw new Error(`no matcher for ${variant[0]}!`);
+        throw new Error(`No matcher for ${tag}!`);
     }
 
-    return matcher(variant[1], variant);
+    return matcher(value, variant);
 };
 
 export default match;

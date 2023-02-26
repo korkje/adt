@@ -19,10 +19,12 @@ import type Result from "./result";
  */
 export const expect = <T>(
     variant: Option<T> | Result<T, any>,
-    message: string
-): T => {
-    if (["some", "ok"].includes(variant[0])) {
-        return variant[1];
+    message: string,
+) => {
+    const [tag, value] = variant;
+
+    if (tag === "some" || tag === "ok") {
+        return value;
     }
 
     throw new Error(message);
@@ -40,14 +42,14 @@ export const expect = <T>(
  * @throws
  * An error if the variant is not 'some' or 'ok'.
  */
-export const unwrap = <T>(
-    variant: Option<T> | Result<T, any>
-): T => {
-    if (["some", "ok"].includes(variant[0])) {
-        return variant[1];
+export const unwrap = <T>(variant: Option<T> | Result<T, any>) => {
+    const [tag, value] = variant;
+
+    if (tag === "some" || tag === "ok") {
+        return value;
     }
 
-    throw new Error(`Variant was '${variant[0]}'!`);
+    throw new Error(`Variant was '${tag}'!`);
 }
 
 /**
@@ -66,8 +68,10 @@ export const unwrap_or = <T>(
     variant: Option<T> | Result<T, any>,
     fallback: T
 ): T => {
-    if (["some", "ok"].includes(variant[0])) {
-        return variant[1];
+    const [tag, value] = variant;
+
+    if (tag === "some" || tag === "ok") {
+        return value;
     }
 
     return fallback;
@@ -88,10 +92,12 @@ export const unwrap_or = <T>(
  */
 export const unwrap_or_else = <T>(
     variant: Option<T> | Result<T, any>,
-    fallback: () => T
+    fallback: () => T,
 ): T => {
-    if (["some", "ok"].includes(variant[0])) {
-        return variant[1];
+    const [tag, value] = variant;
+
+    if (tag === "some" || tag === "ok") {
+        return value;
     }
 
     return fallback();
