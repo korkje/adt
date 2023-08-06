@@ -13,7 +13,10 @@ export type Result<T, E> =
  * @returns
  * The new variant.
  */
-export const ok = <T>(value: T) => variant("ok", value);
+export const ok: {
+    <T>(value: T): ["ok", T];
+    (): ["ok", undefined];
+} = <T>(value?: T) => variant("ok", value);
 
 /**
  * Creates a new 'err' variant.

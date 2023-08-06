@@ -11,6 +11,12 @@ test("Simple usage", () => {
     expect(err_result).toEqual(["err", "error"]);
 });
 
+test("Usage without ok value", () => {
+    const ok_result = ok();
+
+    expect(ok_result).toEqual(["ok", undefined]);
+});
+
 test("Usage with match", () => {
     type StringResult = Result<string, Error>;
 

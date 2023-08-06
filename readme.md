@@ -107,7 +107,7 @@ This is only scratching the surface of what you can do with algebraic data types
 
 ## Installation
 ```bash
-npm install --save @korkje/adt
+npm install @korkje/adt
 ```
 
 ## Usage
