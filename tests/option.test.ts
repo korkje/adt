@@ -1,17 +1,16 @@
-import { test, expect } from "vitest";
-import type Option from "./option";
-import { some, none } from "./option";
-import match from "./match";
+import { assertEquals } from "@std/assert";
+import { type Option, some, none} from "lib/option.ts";
+import match from "lib/match.ts";
 
-test("Simple usage", () => {
+Deno.test("Simple usage", () => {
     const some_result = some(10) as Option<number>;
     const none_result = none as Option<number>;
 
-    expect(some_result).toEqual(["some", 10]);
-    expect(none_result).toEqual(["none", null]);
+    assertEquals(some_result, ["some", 10]);
+    assertEquals(none_result, ["none", null]);
 });
 
-test("Usage with match", () => {
+Deno.test("Usage with match", () => {
     type StringOption = Option<string>;
 
     const some_string = some("hello") as StringOption;
@@ -22,17 +21,17 @@ test("Usage with match", () => {
         none: () => "none",
     });
 
-    expect(some_result).toBe("hello");
+    assertEquals(some_result, "hello");
 
     const none_result = match(none_string, {
         some: value => value,
         none: () => "none",
     });
 
-    expect(none_result).toBe("none");
+    assertEquals(none_result, "none");
 });
 
-test("Linked list", () => {
+Deno.test("Linked list", () => {
     type LL<T> = Option<[T, LL<T>]>;
 
     const list: LL<number> = some([10, some([20, some([30, none])])]);
@@ -42,10 +41,10 @@ test("Linked list", () => {
         none: () => [],
     });
 
-    expect(ll_to_arr(list)).toEqual([10, 20, 30]);
+    assertEquals(ll_to_arr(list), [10, 20, 30]);
 
     const arr_to_ll = (arr: number[]): LL<number> =>
         arr.length > 0 ? some([arr[0], arr_to_ll(arr.slice(1))]) : none;
 
-    expect(arr_to_ll([10, 20, 30])).toEqual(list);
+    assertEquals(arr_to_ll([10, 20, 30]), list);
 });

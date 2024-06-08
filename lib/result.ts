@@ -1,4 +1,4 @@
-import { variant } from "./adt";
+import { variant } from "lib/adt.ts";
 
 export type Result<T, E> =
     | ["ok", T]

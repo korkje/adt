@@ -1,5 +1,5 @@
-import type Option from "./option";
-import type Result from "./result";
+import type Option from "lib/option.ts";
+import type Result from "lib/result.ts";
 
 /**
  * Unwraps a variant, throwing an error with a custom message if it is not

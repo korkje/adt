@@ -1,7 +1,7 @@
-import { test, expect } from "vitest";
-import adt, { Variants } from "./adt";
+import { assertEquals } from "@std/assert";
+import adt, { type Variants } from "lib/adt.ts";
 
-test("Simple usage", () => {
+Deno.test("Simple usage", () => {
     const foot = adt({
         left: null,
         right: null,
@@ -10,11 +10,11 @@ test("Simple usage", () => {
     const left = foot.left;
     const right = foot.right;
 
-    expect(left).toEqual(["left", null]);
-    expect(right).toEqual(["right", null]);
+    assertEquals(left, ["left", null]);
+    assertEquals(right, ["right", null]);
 });
 
-test("Advanced usage", () => {
+Deno.test("Advanced usage", () => {
     const command = adt({
         move: (x: number, y: number) => ({ x, y }),
         attack: (target: string) => target,
@@ -23,12 +23,11 @@ test("Advanced usage", () => {
     const move = command.move(10, 20);
     const attack = command.attack("enemy");
 
-    expect(move).toEqual(["move", { x: 10, y: 20 }]);
-
-    expect(attack).toEqual(["attack", "enemy"]);
+    assertEquals(move, ["move", { x: 10, y: 20 }]);
+    assertEquals(attack, ["attack", "enemy"]);
 });
 
-test("Nested usage", () => {
+Deno.test("Nested usage", () => {
     const ac_status = adt({
         on: null,
         off: null,
@@ -45,24 +44,22 @@ test("Nested usage", () => {
     const ac_off = power_source.ac(ac_status.off, 230);
     const battery = power_source.battery(12);
 
-    expect(ac_on).toEqual([
+    assertEquals(ac_on, [
         "ac", {
             status: ["on", null],
             voltage: 230,
         },
     ]);
-
-    expect(ac_off).toEqual([
+    assertEquals(ac_off, [
         "ac", {
             status: ["off", null],
             voltage: 230,
         },
     ]);
-
-    expect(battery).toEqual(["battery", 12]);
+    assertEquals(battery, ["battery", 12]);
 });
 
-test("Deeply nested usage", () => {
+Deno.test("Deeply nested usage", () => {
     const activity = adt({
         idle: null,
         moving: {
@@ -76,7 +73,7 @@ test("Deeply nested usage", () => {
 
     const my_activity = activity.moving.running.sprinting;
 
-    expect(my_activity).toEqual([
+    assertEquals(my_activity, [
         "moving", [
             "running", [
                 "sprinting",
@@ -86,7 +83,7 @@ test("Deeply nested usage", () => {
     ]);
 });
 
-test("Linked list", () => {
+Deno.test("Linked list", () => {
     type Cons<T> = {
         head: T;
         tail: List<T>;
@@ -112,9 +109,8 @@ test("Linked list", () => {
         current = current[1].tail;
     }
 
-    expect(values).toEqual([1, 2]);
-
-    expect(my_list).toEqual([
+    assertEquals(values, [1, 2]);
+    assertEquals(my_list, [
         "cons", {
             head: 1,
             tail: [

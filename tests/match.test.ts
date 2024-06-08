@@ -1,9 +1,8 @@
-import { test, expect } from "vitest";
-import match, { def } from "./match";
-import adt, { variant } from "./adt";
-import type { Variants } from "./adt";
+import { assertEquals, assertThrows } from "@std/assert";
+import match, { def } from "lib/match.ts";
+import adt, { variant, type Variants } from "lib/adt.ts";
 
-test("Simple usage", () => {
+Deno.test("Simple usage", () => {
     const foot = adt({
         left: null,
         right: null,
@@ -19,17 +18,17 @@ test("Simple usage", () => {
         right: () => "right",
     });
 
-    expect(left_result).toBe("left");
+    assertEquals(left_result, "left");
 
     const right_result = match(right, {
         left: () => "left",
         right: () => "right",
     });
 
-    expect(right_result).toBe("right");
+    assertEquals(right_result, "right");
 });
 
-test("Simple usage with fallback", () => {
+Deno.test("Simple usage with fallback", () => {
     const foot = adt({
         left: null,
         right: null,
@@ -44,10 +43,10 @@ test("Simple usage with fallback", () => {
         [def]: () => "not left",
     });
 
-    expect(left_result).toBe("not left");
+    assertEquals(left_result, "not left");
 });
 
-test("Advanced usage", () => {
+Deno.test("Advanced usage", () => {
     const command = adt({
         move: (x: number, y: number) => ({ x, y }),
         attack: (target: string) => target,
@@ -63,17 +62,17 @@ test("Advanced usage", () => {
         attack: target => `attack(${target})`,
     });
 
-    expect(move_result).toBe("move(10, 20)");
+    assertEquals(move_result, "move(10, 20)");
 
     const attack_result = match(attack, {
         move: ({ x, y }) => `move(${x}, ${y})`,
         attack: target => `attack(${target})`,
     });
 
-    expect(attack_result).toBe("attack(enemy)");
+    assertEquals(attack_result, "attack(enemy)");
 });
 
-test("Extract matched variant", () => {
+Deno.test("Extract matched variant", () => {
     const command = adt({
         move: (x: number, y: number) => ({ x, y }),
         attack: (target: string) => target,
@@ -81,30 +80,30 @@ test("Extract matched variant", () => {
 
     type Command = Variants<typeof command>;
 
-    const move = command.move(10, 20) as Command;
+    const moveCmd = command.move(10, 20) as Command;
 
-    const move_result = match(move, {
+    const move_result = match(moveCmd, {
         move: ({ x, y }, variant) => {
-            expect(variant).toBe(move);
+            assertEquals(variant, moveCmd);
             return `move(${x}, ${y})`;
         },
         attack: target => `attack(${target})`,
     });
 
-    expect(move_result).toBe("move(10, 20)");
+    assertEquals(move_result, "move(10, 20)");
 
-    const default_result = match(move, {
+    const default_result = match(moveCmd, {
         [def]: (value, variant) => {
-            expect(variant[0]).toBe("move");
-            expect(variant[1]).toEqual({ x: 10, y: 20 });
+            assertEquals(variant[0], "move");
+            assertEquals(variant[1], { x: 10, y: 20 });
             return value;
         },
     });
 
-    expect(default_result).toBe(move[1]);
+    assertEquals(default_result, moveCmd[1]);
 });
 
-test("Nested usage", () => {
+Deno.test("Nested usage", () => {
     const direction = adt({
         left: null,
         right: null,
@@ -130,7 +129,7 @@ test("Nested usage", () => {
         jump: () => "jump",
     });
 
-    expect(move_result_0).toBe("move(right, 10)");
+    assertEquals(move_result_0, "move(right, 10)");
 
     const move_result_1 = match(move, {
         move: ({ direction, distance }) => match(direction, {
@@ -141,10 +140,10 @@ test("Nested usage", () => {
         jump: () => "jump",
     });
 
-    expect(move_result_1).toBe("move(right, 10)");
+    assertEquals(move_result_1, "move(right, 10)");
 });
 
-test("Nested usage, special syntax", () => {
+Deno.test("Nested usage, special syntax", () => {
     const power_source = adt({
         battery: (voltage: number) => voltage,
         ac: {
@@ -167,7 +166,7 @@ test("Nested usage, special syntax", () => {
         }),
     });
 
-    expect(battery_result).toBe("battery(12)");
+    assertEquals(battery_result, "battery(12)");
 
     const ac_on_result = match(ac_on, {
         battery: charge => `battery(${charge})`,
@@ -177,7 +176,7 @@ test("Nested usage, special syntax", () => {
         }),
     });
 
-    expect(ac_on_result).toBe("ac.on(230)");
+    assertEquals(ac_on_result, "ac.on(230)");
 
     const ac_off_result = match(ac_off, {
         battery: charge => `battery(${charge})`,
@@ -187,10 +186,10 @@ test("Nested usage, special syntax", () => {
         }),
     });
 
-    expect(ac_off_result).toBe("ac.off");
+    assertEquals(ac_off_result, "ac.off");
 });
 
-test("Deeply nested usage", () => {
+Deno.test("Deeply nested usage", () => {
     const activity = adt({
         idle: null,
         moving: {
@@ -217,10 +216,10 @@ test("Deeply nested usage", () => {
         }),
     });
 
-    expect(sprinting_result).toBe("sprinting");
+    assertEquals(sprinting_result, "sprinting");
 });
 
-test("Linked list", () => {
+Deno.test("Linked list", () => {
     type LL<T> =
         | ["nil", null]
         | ["cons", readonly [T, LL<T>]];
@@ -235,10 +234,10 @@ test("Linked list", () => {
         cons: ([h, t]) => [h, ...ll_to_arr(t)],
     });
 
-    expect(ll_to_arr(my_ll)).toEqual([1, 2, 3]);
+    assertEquals(ll_to_arr(my_ll), [1, 2, 3]);
 });
 
-test("Throw on unmatched variant", () => {
+Deno.test("Throw on unmatched variant", () => {
     const foot = adt({
         left: null,
         right: null,
@@ -248,8 +247,8 @@ test("Throw on unmatched variant", () => {
 
     const right = foot.right as Foot;
 
-    // @ts-expect-error
-    expect(() => match(right, {
-        left: () => "left",
-    })).toThrow();
+    assertThrows(() => {
+        // @ts-expect-error: Non-exhaustive
+        match(right, { left: () => "left" });
+    });
 });

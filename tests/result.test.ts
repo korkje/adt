@@ -1,23 +1,22 @@
-import { test, expect } from "vitest";
-import type Result from "./result";
-import { ok, err } from "./result";
-import match from "./match";
+import { assertEquals, assertThrows } from "@std/assert";
+import { type Result, ok, err } from "lib/result.ts";
+import match from "lib/match.ts";
 
-test("Simple usage", () => {
+Deno.test("Simple usage", () => {
     const ok_result = ok(10) as Result<number, string>;
     const err_result = err("error") as Result<number, string>;
 
-    expect(ok_result).toEqual(["ok", 10 ]);
-    expect(err_result).toEqual(["err", "error"]);
+    assertEquals(ok_result, ["ok", 10 ]);
+    assertEquals(err_result, ["err", "error"]);
 });
 
-test("Usage without ok value", () => {
+Deno.test("Usage without ok value", () => {
     const ok_result = ok();
 
-    expect(ok_result).toEqual(["ok", undefined]);
+    assertEquals(ok_result, ["ok", undefined]);
 });
 
-test("Usage with match", () => {
+Deno.test("Usage with match", () => {
     type StringResult = Result<string, Error>;
 
     const ok_string = ok("hello") as StringResult;
@@ -28,27 +27,27 @@ test("Usage with match", () => {
         err: error => error.message,
     });
 
-    expect(ok_result).toBe("hello");
+    assertEquals(ok_result, "hello");
 
     const err_result = match(err_string, {
         ok: value => value,
         err: error => error.message,
     });
 
-    expect(err_result).toBe("error");
+    assertEquals(err_result, "error");
 });
 
-test("Usage with throw", () => {
+Deno.test("Usage with throw", () => {
     type StringResult = Result<string, Error>;
 
     const err_string = err(new Error("error")) as StringResult;
 
-    expect(() => {
+    assertThrows(() => {
         match(err_string, {
             ok: value => value,
             err: error => {
                 throw error;
             },
         });
-    }).toThrowError("error");
+    }, Error, "error");
 });
