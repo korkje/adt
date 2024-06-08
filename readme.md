@@ -1,9 +1,4 @@
-# algebraic data types
-
-[![npm](https://img.shields.io/npm/v/@korkje/adt)](https://www.npmjs.com/package/@korkje/adt)
-[![NPM](https://img.shields.io/github/license/korkje/adt)](license.md)
-
-## Introduction
+# adt [![JSR](https://jsr.io/badges/@korkje/adt)](https://jsr.io/@korkje/adt)
 
 This package attempts to bring Rust's fancy enums (and associated pattern matching) to TypeScript. These are sometimes referred to as algebraic data types, tagged unions, discriminated unions, disjoint unions, sum types, coproduct types or variant types. Read more about them [here](https://en.wikipedia.org/wiki/Algebraic_data_type).
 
@@ -84,7 +79,6 @@ match(my_ip, {
 This is only scratching the surface of what you can do with algebraic data types. If this sounds interesting to you, read on!
 
 ## Table of contents
-- [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Emulating enums](#emulating-enums)
@@ -107,7 +101,14 @@ This is only scratching the surface of what you can do with algebraic data types
 
 ## Installation
 ```bash
-npm install @korkje/adt
+# deno
+deno add @korkje/adt
+
+# npm (and friends)
+npx jsr add @korkje/adt
+yarn dlx jsr add @korkje/adt
+pnpm dlx jsr add @korkje/adt
+bunx jsr add @korkje/adt
 ```
 
 ## Usage
