@@ -1,6 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
 
-type Description = {
+/**
+ * Represents a description of an algebraic data type.
+ */
+export type Description = {
     [tag: string]:
     | null
     | ((...args: any[]) => any)
@@ -13,6 +16,9 @@ type Out<F> = F extends (...args: any[]) => infer R ? R : never;
 type Str<T> = T extends string ? T : never;
 type StrArr<T> = T extends string[] ? T : never;
 
+/**
+ * Represents the instantiator produced by a given description.
+ */
 export type ADT<D extends Description, W extends string[] = []> = {
     [T in keyof D]: D[T] extends null
         ? Wrap<[Str<T>, D[T]], W>
@@ -52,6 +58,18 @@ export type Variants<A> = A extends ADT<infer D> ? {
             : [Str<T>, Out<D[T]>];
 }[keyof D] : never;
 
+/**
+ * Creates a new tag/value pair.
+ *
+ * @param tag
+ * The tag of the variant.
+ *
+ * @param value
+ * The value of the variant.
+ *
+ * @returns
+ * The new variant.
+ */
 export const variant = <T extends string, V>(tag: T, value: V) => [tag, value] as [T, V];
 
 const wrap = (value: any, tags: string[]) =>

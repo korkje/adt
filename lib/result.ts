@@ -1,5 +1,8 @@
 import { variant } from "lib/adt.ts";
 
+/**
+ * Represents a value or an error.
+ */
 export type Result<T, E> =
     | ["ok", T]
     | ["err", E];
@@ -29,6 +32,9 @@ export const ok: {
  */
 export const err = <E>(error: E): ["err", E] => variant("err", error);
 
+/**
+ * Contains the 'ok' and 'err' variants.
+ */
 export const result = { ok, err };
 
 export default Result;
