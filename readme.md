@@ -58,8 +58,7 @@ This is both more verbose, and a lot less ergonomic. That goes for typing the AD
 With the exported `adt` and `match` functions, you'll be able to achieve (among other things) the above functionality in TypeScript, like this:
 
 ```typescript
-import adt, { match } from "@korkje/adt";
-import type { Variants } from "@korkje/adt";
+import adt, { match, type Variants } from "@korkje/adt";
 
 const ip = adt({
     v4: (a: number, b: number, c: number, d: number) => [a, b, c, d],
@@ -287,8 +286,7 @@ const U = match(current_power_status, {
 If you use the `def` symbol to specify a default case when one or more variants have associated data, the parameter passed to the default case will be correctly typed as the union of the associated data types that don't have explicit matchers:
 
 ```typescript
-import adt, { match, def } from "@korkje/adt";
-import type { Variants } from "@korkje/adt";
+import adt, { match, def, type Variants } from "@korkje/adt";
 
 const housing = adt({
     house: (floors: number, rooms: number) => ({ floors, rooms }),
@@ -463,8 +461,7 @@ console.log(ll_to_arr(list)); // [1, 2, 3]
 `Option` is a type that can either be `some` or `none`. It is useful for representing the possibility of a value not existing.
 
 ```typescript
-import type { Option } from "@korkje/adt";
-import { some, none } from "@korkje/adt";
+import { type Option, some, none } from "@korkje/adt";
 
 const get_option = (): Option<number> => 
     Math.random() > 0.5
@@ -484,8 +481,7 @@ const value = match(option, {
 `Result` is a type that can either be `ok` or `err`. It is useful for representing the possibility of a function failing.
 
 ```typescript
-import type { Result } from "@korkje/adt";
-import { ok, err } from "@korkje/adt";
+import { type Result, ok, err } from "@korkje/adt";
 
 const get_result = (): Result<number, Error> => 
     Math.random() > 0.5
