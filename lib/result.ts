@@ -27,7 +27,7 @@ export const ok: {
  * @returns
  * The new variant.
  */
-export const err = <E>(error: E) => variant("err", error);
+export const err = <E>(error: E): ["err", E] => variant("err", error);
 
 export const result = { ok, err };
 

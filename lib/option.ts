@@ -13,12 +13,12 @@ export type Option<T> =
  * @returns
  * The new variant.
  */
-export const some = <T>(value: T) => variant("some", value);
+export const some = <T>(value: T): ["some", T] => variant("some", value);
 
 /**
  * *Is* the 'none' variant.
  */
-export const none = variant("none", null);
+export const none: ["none", null] = variant("none", null);
 
 export const option = { some, none };
 
