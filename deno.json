@@ -1,0 +1,30 @@
+{
+    "name": "@korkje/adt",
+    "version": "0.0.0",
+    "lock": false,
+    "exports": {
+        ".": "./mod.ts",
+        "./adt": "./lib/adt.ts",
+        "./if_let": "./lib/if_let.ts",
+        "./match": "./lib/match.ts",
+        "./option": "./lib/option.ts",
+        "./result": "./lib/result.ts",
+        "./unwrap": "./lib/unwrap.ts"
+    },
+    "imports": {
+        "@std/assert": "jsr:@std/assert@^0.225.3",
+        "@std/testing": "jsr:@std/testing@^0.225.1",
+        "lib/": "./lib/"
+    },
+    "publish": {
+        "include": [
+            "mod.ts",
+            "lib/**/*",
+            "license.md",
+            "readme.md"
+        ]
+    },
+    "fmt": {
+        "indentWidth": 4
+    }
+}

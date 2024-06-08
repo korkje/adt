@@ -1,5 +1,7 @@
-import type Option from "./option";
-import type Result from "./result";
+// deno-lint-ignore-file no-explicit-any
+
+import type Option from "lib/option.ts";
+import type Result from "lib/result.ts";
 
 /**
  * Unwraps a variant, throwing an error with a custom message if it is not
@@ -20,7 +22,7 @@ import type Result from "./result";
 export const expect = <T>(
     variant: Option<T> | Result<T, any>,
     message: string,
-) => {
+): T => {
     const [tag, value] = variant;
 
     if (tag === "some" || tag === "ok") {
@@ -42,7 +44,7 @@ export const expect = <T>(
  * @throws
  * An error if the variant is not 'some' or 'ok'.
  */
-export const unwrap = <T>(variant: Option<T> | Result<T, any>) => {
+export const unwrap = <T>(variant: Option<T> | Result<T, any>): T => {
     const [tag, value] = variant;
 
     if (tag === "some" || tag === "ok") {

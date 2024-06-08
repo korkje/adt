@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 type Description = {
     [tag: string]:
     | null
@@ -83,7 +85,7 @@ export function adt<D extends Description>(desc: D, tags: string[] = []): ADT<D>
                 ? wrap(variant(tag, null), tags)
                 : typeof value === "function"
                     ? (...args: any[]) => wrap(variant(tag, value(...args)), tags)
-                    // @ts-ignore
+                    // @ts-ignore: This is fine.
                     : adt(value, [...tags, tag])
         }), {}) as ADT<D>;
 };

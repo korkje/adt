@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 /**
  * Calls a callback if a variant matches a specific tag.
  *
@@ -21,7 +23,7 @@ export const if_let = <
     variant: V,
     tag: T,
     callback: (value: U) => void,
-) => {
+): void => {
     if (variant[0] === tag) {
         callback(variant[1]);
     }

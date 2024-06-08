@@ -1,8 +1,8 @@
-import { test, expect, vi } from "vitest";
-import adt, { Variants } from "./adt";
-import if_let from "./if_let";
+import { spy, assertSpyCall, assertSpyCalls } from "@std/testing/mock";
+import adt, { type Variants } from "lib/adt.ts";
+import if_let from "lib/if_let.ts";
 
-test("Simple usage", () => {
+Deno.test("Simple usage", () => {
     const foot = adt({
         left: null,
         right: null,
@@ -12,14 +12,14 @@ test("Simple usage", () => {
 
     const left = foot.left as Foot;
 
-    const matcher = vi.fn();
+    const matcher = spy();
 
     if_let(left, "left", matcher);
 
-    expect(matcher).toBeCalledWith(null);
+    assertSpyCall(matcher, 0, { args: [null] });
 });
 
-test("Advanced usage", () => {
+Deno.test("Advanced usage", () => {
     const command = adt({
         move: (x: number, y: number) => ({ x, y }),
         attack: (target: string) => target,
@@ -29,20 +29,18 @@ test("Advanced usage", () => {
 
     const move = command.move(10, 20) as Command;
 
-    const matcher = vi.fn();
+    const matcher = spy();
 
     if_let(move, "move", matcher);
 
-    expect(matcher).toBeCalledWith({ x: 10, y: 20 });
-
-    matcher.mockClear();
+    assertSpyCall(matcher, 0, { args: [{ x: 10, y: 20 }] });
 
     if_let(move, "attack", matcher);
 
-    expect(matcher).not.toBeCalled();
+    assertSpyCalls(matcher, 1);
 });
 
-test("Nested usage", () => {
+Deno.test("Nested usage", () => {
     const ac_status = adt({
         on: null,
         off: null,
@@ -59,17 +57,17 @@ test("Nested usage", () => {
 
     const ac_on = power_source.ac(ac_status.on, 230) as PowerSource;
 
-    const outer = vi.fn();
+    const outer = spy();
 
     if_let(ac_on, "ac", outer);
 
-    expect(outer).toBeCalledWith({ status: ac_status.on, voltage: 230 });
+    assertSpyCall(outer, 0, { args: [{ status: ac_status.on, voltage: 230 }] });
 
-    const inner = vi.fn();
+    const inner = spy();
 
     if_let(ac_on, "ac", ({ status }) => {
         if_let(status, "on", inner);
     });
 
-    expect(inner).toBeCalledWith(null);
+    assertSpyCall(inner, 0, { args: [null] });
 });
