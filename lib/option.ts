@@ -3,7 +3,7 @@ import { variant } from "lib/adt.ts";
 /**
  * Represents a value or absence.
  */
-export type Option<T> =
+export type Option<T = unknown> =
     | ["some", T]
     | ["none", null];
 
@@ -11,7 +11,7 @@ export type Option<T> =
  * Creates a new 'some' variant.
  *
  * @param value
- * The value to wrap.
+ * - The value to wrap.
  *
  * @returns
  * The new variant.

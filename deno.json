@@ -5,6 +5,7 @@
     "exports": {
         ".": "./mod.ts",
         "./adt": "./lib/adt.ts",
+        "./expect": "./lib/expect.ts",
         "./if_let": "./lib/if_let.ts",
         "./match": "./lib/match.ts",
         "./option": "./lib/option.ts",

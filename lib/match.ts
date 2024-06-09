@@ -38,10 +38,10 @@ type Out<M, K extends string> = Exclude<K, keyof M> extends never
  * Matches a variant against a set of matchers.
  *
  * @param variant
- * The variant to match.
+ * - The variant to match.
  *
  * @param matchers
- * The matchers to use.
+ * - The matchers to use.
  *
  * @returns
  * The result of the matched matcher.
@@ -92,7 +92,7 @@ export function match(variant: any, matchers: any) {
     const matcher = matchers[tag] ?? matchers[def];
 
     if (matcher === undefined) {
-        throw new Error(`No matcher for ${tag}!`);
+        throw new Error(`No matcher for ${tag}`);
     }
 
     return matcher(value, variant);

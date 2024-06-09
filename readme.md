@@ -96,7 +96,9 @@ This is only scratching the surface of what you can do with algebraic data types
   - [Result](#result)
 - [Additional helpers](#additional-helpers)
   - [if_let](#if_let)
-  - [unwrap (and friends)](#unwrap-and-friends)
+  - [let_else](#let_else)
+  - [unwrap](#unwrap)
+  - [expect](#expect)
 
 ## Installation
 ```bash
@@ -513,9 +515,21 @@ if_let(get_power_source(), "battery", voltage => {
 });
 ```
 
-### unwrap (and friends)
+### let_else
 
-`unwrap`, `expect`, `unwrap_or` and `unwrap_or_else` are helper functions inspired by those exposed by the `Option` and `Result` types in Rust. Similarly, these work on the previously mentioned `Option` and `Result` types. The purpose of these functions is to extract the associated data from a variant, or (in some cases) to throw an error if the variant is `none` or `err`.
+`let_else` is a helper function inspired by Rust's [let-else](https://doc.rust-lang.org/rust-by-example/flow_control/let_else.html), that can be used to match a variant, or call a function and throw if the variant doesn't match:
+
+```typescript
+import { let_else } from "@korkje/adt";
+
+const voltage = let_else(get_power_source(), "battery", () => {
+    throw new Error("Not a battery!");
+});
+```
+
+### unwrap
+
+`unwrap`, `unwrap_err`, `unwrap_or` and `unwrap_or_else` are helper functions inspired by those exposed by the `Option` and/or `Result` types in Rust. Similarly, these work on the previously mentioned `Option` and/or `Result` types. The purpose of these functions is to extract the associated data from a variant, or (in some cases) to throw an error if the variant is `none` or `err`.
 
 `unwrap` simply extracts the associated data from a variant if it is `some` or `ok`, or throws an error if it is `none` or `err`:
 
@@ -525,12 +539,12 @@ import { unwrap } from "@korkje/adt";
 const value = unwrap(get_option());
 ```
 
-`expect` is similar to `unwrap`, but it also takes a message as its second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
+`unwrap_err` is similar to `unwrap`, except it extracts the error from a `Result` variant if it is `err`, or throws an error if it is `ok`:
 
 ```typescript
-import { expect } from "@korkje/adt";
+import { unwrap_err } from "@korkje/adt";
 
-const value = expect(get_option(), "No value!");
+const error = unwrap_err(get_result());
 ```
 
 `unwrap_or` is also similar to `unwrap`, but it takes a default value as its second argument, which is returned if the variant is `none` or `err`:
@@ -547,4 +561,15 @@ const value = unwrap_or(get_option(), 0);
 import { unwrap_or_else } from "@korkje/adt";
 
 const value = unwrap_or_else(get_option(), () => 0);
+```
+
+### expect
+
+`expect` and `expect_err` are very similar to `unwrap` and `unwrap_err`, but they take a message as their second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
+
+```typescript
+import { expect, expect_err } from "@korkje/adt";
+
+const value = expect(get_option(), "No value!");
+const error = expect_err(get_result(), "No error!");
 ```

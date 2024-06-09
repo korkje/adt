@@ -13,5 +13,8 @@ export { type Option, some, none } from "lib/option.ts";
 // Result
 export { type Result, ok, err } from "lib/result.ts";
 
+// expect
+export { expect, expect_err } from "lib/expect.ts";
+
 // unwrap
-export { expect, unwrap, unwrap_or, unwrap_or_else } from "lib/unwrap.ts";
+export { unwrap, unwrap_or, unwrap_or_else } from "lib/unwrap.ts";

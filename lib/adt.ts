@@ -36,7 +36,7 @@ type Wrap<V extends [string, any], W extends string[]> =
  * Extracts the variants' union type from an ADT.
  *
  * @param adt
- * The ADT to extract the variants' union type from.
+ * - The ADT to extract the variants' union type from.
  *
  * @returns
  * The variants' union type.
@@ -62,10 +62,10 @@ export type Variants<A> = A extends ADT<infer D> ? {
  * Creates a new tag/value pair.
  *
  * @param tag
- * The tag of the variant.
+ * - The tag of the variant.
  *
  * @param value
- * The value of the variant.
+ * - The value of the variant.
  *
  * @returns
  * The new variant.
@@ -79,7 +79,7 @@ const wrap = (value: any, tags: string[]) =>
  * Creates an ADT instantiator from a description object.
  *
  * @param desc
- * The description object.
+ * - The description object.
  *
  * @returns
  * The ADT instantiator.

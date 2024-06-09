@@ -4,13 +4,13 @@
  * Calls a callback if a variant matches a specific tag.
  *
  * @param variant
- * The variant to check.
+ * - The variant to check.
  *
  * @param tag
- * The tag to check for.
+ * - The tag to check for.
  *
  * @param callback
- * The callback to call if the variant has the specified tag. The value of
+ * - The callback to call if the variant has the specified tag. The value of
  * the variant is passed to the callback.
  */
 export const if_let = <
