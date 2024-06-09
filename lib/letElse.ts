@@ -13,7 +13,7 @@
  * - The callback to call if the variant has the specified tag. This callback
  *   must throw.
  */
-export const let_else = <
+export const letElse = <
     V extends [string, any],
     T extends V[0],
     U extends V extends [T, infer U]
@@ -26,10 +26,10 @@ export const let_else = <
 ): U => {
     if (variant[0] !== tag) {
         callback();
-        throw new Error("'let_else' callback did not throw");
+        throw new Error("'letElse' callback did not throw");
     }
 
     return variant[1];
 };
 
-export default let_else;
+export default letElse;

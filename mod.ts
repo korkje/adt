@@ -1,8 +1,14 @@
 // adt
 export { default, adt, type Variants } from "lib/adt.ts";
 
-// if_let
-export { if_let } from "lib/if_let.ts";
+// expect
+export { expect, expectErr } from "lib/expect.ts";
+
+// ifLet
+export { ifLet } from "lib/ifLet.ts";
+
+// letElse
+export { letElse } from "lib/letElse.ts";
 
 // match
 export { match, def } from "lib/match.ts";
@@ -13,8 +19,5 @@ export { type Option, some, none } from "lib/option.ts";
 // Result
 export { type Result, ok, err } from "lib/result.ts";
 
-// expect
-export { expect, expect_err } from "lib/expect.ts";
-
 // unwrap
-export { unwrap, unwrap_or, unwrap_or_else } from "lib/unwrap.ts";
+export { unwrap, unwrapErr, unwrapOr, unwrapOrElse } from "lib/unwrap.ts";

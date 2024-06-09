@@ -43,7 +43,7 @@ export const unwrap = <T>(variant: Option<T> | Result<T, any>): T => {
  * @throws
  * An error if the variant is not 'err'.
  */
-export const unwrap_err = <R extends Result>(variant: R): ExtractErr<R> => {
+export const unwrapErr = <R extends Result>(variant: R): ExtractErr<R> => {
     const [tag, value] = variant;
 
     if (tag === "err") {
@@ -65,7 +65,7 @@ export const unwrap_err = <R extends Result>(variant: R): ExtractErr<R> => {
  * @returns
  * The value of the variant, or the fallback value.
  */
-export const unwrap_or = <T>(
+export const unwrapOr = <T>(
     variant: Option<T> | Result<T, any>,
     fallback: T
 ): T => {
@@ -91,7 +91,7 @@ export const unwrap_or = <T>(
  * @returns
  * The value of the variant, or the result of the fallback function.
  */
-export const unwrap_or_else = <T>(
+export const unwrapOrElse = <T>(
     variant: Option<T> | Result<T, any>,
     fallback: () => T,
 ): T => {

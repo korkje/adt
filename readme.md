@@ -29,7 +29,7 @@ type Ip = {
     value: string;
 };
 
-const my_ip = {
+const myIp = {
     tag: "V4",
     value: [127, 0, 0, 1],
 } as Ip;
@@ -38,17 +38,17 @@ const assertNever = (value: never): never => {
     throw new Error(`Unexpected object: ${value}`);
 };
 
-switch (my_ip.tag) {
+switch (myIp.tag) {
     case "V4":
-        const [a, b, c, d] = my_ip.value;
+        const [a, b, c, d] = myIp.value;
         console.log(`${a}.${b}.${c}.${d}`);
         break;
     case "V6":
-        console.log(my_ip.value);
+        console.log(myIp.value);
         break;
     default:
         // Makes sure all cases are covered
-        assertNever(my_ip);
+        assertNever(myIp);
         break;
 }
 ```
@@ -67,9 +67,9 @@ const ip = adt({
 
 type Ip = Variants<typeof ip>;
 
-const my_ip = ip.v4(127, 0, 0, 1) as Ip;
+const myIp = ip.v4(127, 0, 0, 1) as Ip;
 
-match(my_ip, {
+match(myIp, {
     v4: ([a, b, c, d]) => console.log(`${a}.${b}.${c}.${d}`),
     v6: s => console.log(s),
 });
@@ -95,8 +95,8 @@ This is only scratching the surface of what you can do with algebraic data types
   - [Option](#option)
   - [Result](#result)
 - [Additional helpers](#additional-helpers)
-  - [if_let](#if_let)
-  - [let_else](#let_else)
+  - [ifLet](#iflet)
+  - [letElse](#letelse)
   - [unwrap](#unwrap)
   - [expect](#expect)
 
@@ -121,13 +121,13 @@ In the most simple case, `adt` can be used as a drop-in replacement for TypeScri
 ```typescript
 import adt from "@korkje/adt";
 
-const power_status = adt({
+const powerStatus = adt({
     on: null,
     off: null,
 });
 ```
 
-In this case, `power_status`' properties are the variants of the enum. The `null` primitive is used to indicate that the variant has no associated data. If you want to associate data with a variant, jump right to the fun part: [beyond enums](#beyond-enums).
+In this case, `powerStatus`' properties are the variants of the enum. The `null` primitive is used to indicate that the variant has no associated data. If you want to associate data with a variant, jump right to the fun part: [beyond enums](#beyond-enums).
 
 ### Useful typing
 
@@ -136,12 +136,12 @@ If you have a function that should return a variant, you can extract the union o
 ```typescript
 import type { Variants } from "@korkje/adt";
 
-type PowerStatus = Variants<typeof power_status>;
+type PowerStatus = Variants<typeof powerStatus>;
 
-const get_power_status = (): PowerStatus => 
+const getPowerStatus = (): PowerStatus => 
     Math.random() > 0.5
-        ? power_status.on
-        : power_status.off;
+        ? powerStatus.on
+        : powerStatus.off;
 ```
 
 The variants themseves are intentionally not typed as the union of all variants, which is useful in a lot of cases. For instance, you might want to implicitly narrow the return type of a function based on only the variant or variants it can return.
@@ -153,9 +153,9 @@ When you've got your hands on a variant, you can use the `match` function to det
 ```typescript
 import { match } from "@korkje/adt";
 
-const current_power_status = get_power_status();
+const currentPowerStatus = getPowerStatus();
 
-match(current_power_status, {
+match(currentPowerStatus, {
     on: () => console.log("The power is on"),
     off: () => console.log("The power is off"),
 });
@@ -163,7 +163,7 @@ match(current_power_status, {
 
 ### Default cases
 
-If you want, you can omit one or more cases and specify a default case instead:
+If you want, you can omit one or more cases and specify a default case `def` `Symbol`:
 
 ```typescript
 const color = adt({
@@ -172,10 +172,10 @@ const color = adt({
     blue: null,
 });
 
-const get_color = (): Variants<typeof color> =>
+const getColor = (): Variants<typeof color> =>
     // ...
 
-match(get_color(), {
+match(getColor(), {
     red: () => console.log("red"),
     [def]: () => console.log("blue or green"),
 });
@@ -184,7 +184,7 @@ match(get_color(), {
 As briefly mentioned above, if you don't explicitly type the return type of a function using `Variants`, it will be the narrowed to only the relevant variants. Say you have a function that returns a `red` or `green` variant:
 
 ```typescript
-const get_color = () => 
+const getColor = () => 
     Math.random() > 0.5
         ? color.red
         : color.green;
@@ -193,7 +193,7 @@ const get_color = () =>
 In this case, the return type of the function is inferred as only the red or green variant, and the `match` function will not expect a `blue` case:
 
 ```typescript
-match(get_color(), {
+match(getColor(), {
     red: () => console.log("red"),
     green: () => console.log("green"),
     // Not allowed:
@@ -206,7 +206,7 @@ So, if you want to use `Variants` or not will depend on your use case. You might
 Like in Rust, `match` also returns the result of the function that matched the variant:
 
 ```typescript
-const is_on = match(current_power_status, {
+const isOn = match(currentPowerStatus, {
     on: () => true,
     off: () => false,
 });
@@ -218,13 +218,13 @@ The return type of the `match` function is the union of the return types of the 
 
 ```typescript
 // Returns: string
-match(current_power_status, {
+match(currentPowerStatus, {
     on: () => "on",
     off: () => "off",
 });
 
 // Returns: "on" | "off"
-match(current_power_status, {
+match(currentPowerStatus, {
     on: () => "on" as const,
     off: () => "off" as const,
 });
@@ -235,7 +235,7 @@ match(current_power_status, {
 Where TypeScript's enums are limited to encapsulating strings or numbers, `adt` allows you to associate arbitrary data with variants by providing "creator" functions:
 
 ```typescript
-const power_status = adt({
+const powerStatus = adt({
     on: (voltage: number) => voltage,
     off: null,
 });
@@ -244,7 +244,7 @@ const power_status = adt({
 The `match` function can then be used to extract the data:
 
 ```typescript
-const U = match(current_power_status, {
+const U = match(currentPowerStatus, {
     on: voltage => voltage,
     off: () => null,
 });
@@ -255,7 +255,7 @@ The type of `U` in this case is `number | null`.
 The variant itself is passed to the matching function as a second argument, if you need it:
 
 ```typescript
-const U = match(current_power_status, {
+const U = match(currentPowerStatus, {
     on: (_, variant) => variant,
     off: () => null,
 });
@@ -268,7 +268,7 @@ In this case, the type of `U` is `["on", number] | null`, where `["on", number]`
 As it is only the return type of the creator function that determines the type of the variant's associated data, you can get creative with it:
 
 ```typescript
-const power_status = adt({
+const powerStatus = adt({
     on: (current: number, resistance: number) => ({
         U: current * resistance,
         I: current,
@@ -277,7 +277,7 @@ const power_status = adt({
     off: null,
 });
 
-const U = match(current_power_status, {
+const U = match(currentPowerStatus, {
     on: ({ U }) => U,
     off: () => null,
 });
@@ -296,10 +296,10 @@ const housing = adt({
     tent: null,
 });
 
-const get_housing = (): Variants<typeof housing> =>
+const getHousing = (): Variants<typeof housing> =>
     // ...
 
-match(get_housing(), {
+match(getHousing(), {
     house: ({ floors, rooms }) => console.log(`House: ${floors} floors, ${rooms} rooms`),
     [def]: value => console.log(value),
 });
@@ -312,30 +312,30 @@ In the above example, the type of `value` (in the default matcher) will be corre
 You can also nest ADTs inside one another:
 
 ```typescript
-const ac_status = adt({
+const acStatus = adt({
     on: (voltage: number) => voltage,
     off: null,
 });
 
-type ACStatus = Variants<typeof ac_status>;
+type ACStatus = Variants<typeof acStatus>;
 
-const power_source = adt({
+const powerSource = adt({
     battery: (voltage: number) => voltage,
     ac: (status: ACStatus) => status,
 });
 
-type PowerSource = Variants<typeof power_source>;
+type PowerSource = Variants<typeof powerSource>;
 
-const get_power_source = (): PowerSource => 
+const getPowerSource = (): PowerSource => 
     Math.random() > 0.5
-        ? power_source.battery(12)
-        : power_source.ac(ac_status.on(230));
+        ? powerSource.battery(12)
+        : powerSource.ac(acStatus.on(230));
 ```
 
 For a simple case like this, there is support for a simpler syntax:
 
 ```typescript
-const power_source = adt({
+const powerSource = adt({
     battery: (voltage: number) => voltage,
     ac: {
         on: (voltage: number) => voltage,
@@ -343,25 +343,25 @@ const power_source = adt({
     },
 });
 
-type PowerSource = Variants<typeof power_source>;
+type PowerSource = Variants<typeof powerSource>;
 
-const get_power_source = (): PowerSource => 
+const getPowerSource = (): PowerSource => 
     Math.random() > 0.5
-        ? power_source.battery(12)
-        : power_source.ac.on(230);
+        ? powerSource.battery(12)
+        : powerSource.ac.on(230);
 ```
 
 However, in the following example, the simpler syntax would not work, because the `ac` variant's associated data isn't *only* a nested ADT:
 
 ```typescript
-const ac_status = adt({
+const acStatus = adt({
     on: null,
     off: null,
 });
 
-type ACStatus = Variants<typeof ac_status>;
+type ACStatus = Variants<typeof acStatus>;
 
-const power_source = adt({
+const powerSource = adt({
     battery: (voltage: number) => voltage,
     ac: (status: ACStatus, voltage: number) => ({ status, voltage }),
 });
@@ -372,7 +372,7 @@ const power_source = adt({
 Using the `match` function, decoding nested ADTs is a breeze:
 
 ```typescript
-const U = match(get_power_source(), {
+const U = match(getPowerSource(), {
     battery: voltage => voltage,
     ac: status => match(status, {
         on: voltage => voltage,
@@ -386,7 +386,7 @@ One could envision a more concise syntax for this, in line with the simpler synt
 Anyway, something like this would be nice:
 
 ```typescript
-const U = match(get_power_source(), {
+const U = match(getPowerSource(), {
     battery: voltage => voltage,
     // Does NOT work, but would be nice:
     ac: { // <-- this is the only difference
@@ -414,7 +414,7 @@ const activity = adt({
 
 type Activity = Variants<typeof activity>;
 
-const my_activity = activity.moving.running.sprinting as Activity;
+const myActivity = activity.moving.running.sprinting as Activity;
 
 const res = match(sprinting, {
     idle: () => "idle",
@@ -446,12 +446,12 @@ const cons = <T>(h: T, t: LL<T>) => variant("cons", [h, t] as const);
 
 const list: LL<number> = cons(1, cons(2, cons(3, nil)));
 
-const ll_to_arr = <T>(ll: LL<T>): T[] => match(ll, {
+const llToArr = <T>(ll: LL<T>): T[] => match(ll, {
     nil: () => [],
-    cons: ([h, t]) => [h, ...ll_to_arr(t)],
+    cons: ([h, t]) => [h, ...llToArr(t)],
 });
 
-console.log(ll_to_arr(list)); // [1, 2, 3]
+console.log(llToArr(list)); // [1, 2, 3]
 ```
 
 ## Option and Result
@@ -465,12 +465,12 @@ console.log(ll_to_arr(list)); // [1, 2, 3]
 ```typescript
 import { type Option, some, none } from "@korkje/adt";
 
-const get_option = (): Option<number> => 
+const getOption = (): Option<number> => 
     Math.random() > 0.5
         ? some(42)
         : none;
 
-const option = get_option();
+const option = getOption();
 
 const value = match(option, {
     some: value => value,
@@ -485,12 +485,12 @@ const value = match(option, {
 ```typescript
 import { type Result, ok, err } from "@korkje/adt";
 
-const get_result = (): Result<number, Error> => 
+const getResult = (): Result<number, Error> => 
     Math.random() > 0.5
         ? ok(42)
         : err(new Error("Something went wrong!"));
 
-const result = get_result();
+const result = getResult();
 
 const value = match(result, {
     ok: value => value,
@@ -503,73 +503,73 @@ const value = match(result, {
 
 ## Additional helpers
 
-### if_let
+### ifLet
 
-`if_let` is a helper function inspired by Rust's [if let](https://doc.rust-lang.org/rust-by-example/flow_control/if_let.html), that can be used to match a variant and call a function with the associated data if the variant matches:
+`ifLet` is a helper function inspired by Rust's [if let](https://doc.rust-lang.org/rust-by-example/flow_control/if_let.html), that can be used to match a variant and call a function with the associated data if the variant matches:
 
 ```typescript
-import { if_let } from "@korkje/adt";
+import { ifLet } from "@korkje/adt";
 
-if_let(get_power_source(), "battery", voltage => {
+ifLet(getPowerSource(), "battery", voltage => {
     console.log(`Battery voltage: ${voltage}`);
 });
 ```
 
-### let_else
+### letElse
 
-`let_else` is a helper function inspired by Rust's [let-else](https://doc.rust-lang.org/rust-by-example/flow_control/let_else.html), that can be used to match a variant, or call a function and throw if the variant doesn't match:
+`letElse` is a helper function inspired by Rust's [let-else](https://doc.rust-lang.org/rust-by-example/flow_control/let_else.html), that can be used to match a variant, or call a function and throw if the variant doesn't match:
 
 ```typescript
-import { let_else } from "@korkje/adt";
+import { letElse } from "@korkje/adt";
 
-const voltage = let_else(get_power_source(), "battery", () => {
+const voltage = letElse(getPowerSource(), "battery", () => {
     throw new Error("Not a battery!");
 });
 ```
 
 ### unwrap
 
-`unwrap`, `unwrap_err`, `unwrap_or` and `unwrap_or_else` are helper functions inspired by those exposed by the `Option` and/or `Result` types in Rust. Similarly, these work on the previously mentioned `Option` and/or `Result` types. The purpose of these functions is to extract the associated data from a variant, or (in some cases) to throw an error if the variant is `none` or `err`.
+`unwrap`, `unwrapErr`, `unwrapOr` and `unwrapOrElse` are helper functions inspired by those exposed by the `Option` and/or `Result` types in Rust. Similarly, these work on the previously mentioned `Option` and/or `Result` types. The purpose of these functions is to extract the associated data from a variant, or (in some cases) to throw an error if the variant is `none` or `err`.
 
 `unwrap` simply extracts the associated data from a variant if it is `some` or `ok`, or throws an error if it is `none` or `err`:
 
 ```typescript
 import { unwrap } from "@korkje/adt";
 
-const value = unwrap(get_option());
+const value = unwrap(getOption());
 ```
 
-`unwrap_err` is similar to `unwrap`, except it extracts the error from a `Result` variant if it is `err`, or throws an error if it is `ok`:
+`unwrapErr` is similar to `unwrap`, except it extracts the error from a `Result` variant if it is `err`, or throws an error if it is `ok`:
 
 ```typescript
-import { unwrap_err } from "@korkje/adt";
+import { unwrapErr } from "@korkje/adt";
 
-const error = unwrap_err(get_result());
+const error = unwrapErr(getResult());
 ```
 
-`unwrap_or` is also similar to `unwrap`, but it takes a default value as its second argument, which is returned if the variant is `none` or `err`:
+`unwrapOr` is also similar to `unwrap`, but it takes a default value as its second argument, which is returned if the variant is `none` or `err`:
 
 ```typescript
-import { unwrap_or } from "@korkje/adt";
+import { unwrapOr } from "@korkje/adt";
 
-const value = unwrap_or(get_option(), 0);
+const value = unwrapOr(getOption(), 0);
 ```
 
-`unwrap_or_else` is similar to `unwrap_or`, but it takes a function as its second argument, which is used to construct the default value if the variant is `none` or `err`:
+`unwrapOrElse` is similar to `unwrapOr`, but it takes a function as its second argument, which is used to construct the default value if the variant is `none` or `err`:
 
 ```typescript
-import { unwrap_or_else } from "@korkje/adt";
+import { unwrapOrElse } from "@korkje/adt";
 
-const value = unwrap_or_else(get_option(), () => 0);
+const value = unwrapOrElse(getOption(), () => 0);
 ```
 
 ### expect
 
-`expect` and `expect_err` are very similar to `unwrap` and `unwrap_err`, but they take a message as their second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
+`expect` and `expectErr` are very similar to `unwrap` and `unwrapErr`, but they take a message as their second argument, which is used to construct the error that is thrown if the variant is `none` or `err`:
 
 ```typescript
-import { expect, expect_err } from "@korkje/adt";
+import { expect, expectErr } from "@korkje/adt";
 
-const value = expect(get_option(), "No value!");
-const error = expect_err(get_result(), "No error!");
+const value = expect(getOption(), "No value!");
+const error = expectErr(getResult(), "No error!");
 ```

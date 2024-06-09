@@ -13,7 +13,7 @@
  * - The callback to call if the variant has the specified tag. The value of
  * the variant is passed to the callback.
  */
-export const if_let = <
+export const ifLet = <
     V extends [string, any],
     T extends V[0],
     U extends V extends [T, infer U]
@@ -29,4 +29,4 @@ export const if_let = <
     }
 };
 
-export default if_let;
+export default ifLet;

@@ -3,47 +3,47 @@ import { type Result, ok, err } from "lib/result.ts";
 import match from "lib/match.ts";
 
 Deno.test("Simple usage", () => {
-    const ok_result = ok(10) as Result<number, string>;
-    const err_result = err("error") as Result<number, string>;
+    const okResult = ok(10) as Result<number, string>;
+    const errResult = err("error") as Result<number, string>;
 
-    assertEquals(ok_result, ["ok", 10 ]);
-    assertEquals(err_result, ["err", "error"]);
+    assertEquals(okResult, ["ok", 10 ]);
+    assertEquals(errResult, ["err", "error"]);
 });
 
 Deno.test("Usage without ok value", () => {
-    const ok_result = ok();
+    const okResult = ok();
 
-    assertEquals(ok_result, ["ok", undefined]);
+    assertEquals(okResult, ["ok", undefined]);
 });
 
 Deno.test("Usage with match", () => {
     type StringResult = Result<string, Error>;
 
-    const ok_string = ok("hello") as StringResult;
-    const err_string = err(new Error("error")) as StringResult;
+    const okString = ok("hello") as StringResult;
+    const errString = err(new Error("error")) as StringResult;
 
-    const ok_result = match(ok_string, {
+    const okResult = match(okString, {
         ok: value => value,
         err: error => error.message,
     });
 
-    assertEquals(ok_result, "hello");
+    assertEquals(okResult, "hello");
 
-    const err_result = match(err_string, {
+    const errResult = match(errString, {
         ok: value => value,
         err: error => error.message,
     });
 
-    assertEquals(err_result, "error");
+    assertEquals(errResult, "error");
 });
 
 Deno.test("Usage with throw", () => {
     type StringResult = Result<string, Error>;
 
-    const err_string = err(new Error("error")) as StringResult;
+    const errString = err(new Error("error")) as StringResult;
 
     assertThrows(() => {
-        match(err_string, {
+        match(errString, {
             ok: value => value,
             err: error => {
                 throw error;

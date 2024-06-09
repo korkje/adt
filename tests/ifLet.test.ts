@@ -1,6 +1,6 @@
 import { spy, assertSpyCall, assertSpyCalls } from "@std/testing/mock";
 import adt, { type Variants } from "lib/adt.ts";
-import if_let from "lib/if_let.ts";
+import ifLet from "lib/ifLet.ts";
 
 Deno.test("Simple usage", () => {
     const foot = adt({
@@ -14,7 +14,7 @@ Deno.test("Simple usage", () => {
 
     const matcher = spy();
 
-    if_let(left, "left", matcher);
+    ifLet(left, "left", matcher);
 
     assertSpyCall(matcher, 0, { args: [null] });
 });
@@ -31,42 +31,42 @@ Deno.test("Advanced usage", () => {
 
     const matcher = spy();
 
-    if_let(move, "move", matcher);
+    ifLet(move, "move", matcher);
 
     assertSpyCall(matcher, 0, { args: [{ x: 10, y: 20 }] });
 
-    if_let(move, "attack", matcher);
+    ifLet(move, "attack", matcher);
 
     assertSpyCalls(matcher, 1);
 });
 
 Deno.test("Nested usage", () => {
-    const ac_status = adt({
+    const acStatus = adt({
         on: null,
         off: null,
     });
 
-    type ACStatus = Variants<typeof ac_status>;
+    type ACStatus = Variants<typeof acStatus>;
 
-    const power_source = adt({
+    const powerSource = adt({
         battery: (voltage: number) => voltage,
         ac: (status: ACStatus, voltage: number) => ({ status, voltage }),
     });
 
-    type PowerSource = Variants<typeof power_source>;
+    type PowerSource = Variants<typeof powerSource>;
 
-    const ac_on = power_source.ac(ac_status.on, 230) as PowerSource;
+    const acOn = powerSource.ac(acStatus.on, 230) as PowerSource;
 
     const outer = spy();
 
-    if_let(ac_on, "ac", outer);
+    ifLet(acOn, "ac", outer);
 
-    assertSpyCall(outer, 0, { args: [{ status: ac_status.on, voltage: 230 }] });
+    assertSpyCall(outer, 0, { args: [{ status: acStatus.on, voltage: 230 }] });
 
     const inner = spy();
 
-    if_let(ac_on, "ac", ({ status }) => {
-        if_let(status, "on", inner);
+    ifLet(acOn, "ac", ({ status }) => {
+        ifLet(status, "on", inner);
     });
 
     assertSpyCall(inner, 0, { args: [null] });

@@ -48,7 +48,7 @@ export const expect = <T>(
  * @throws
  * An error if the variant is not 'err'.
  */
-export const expect_err = <R extends Result>(
+export const expectErr = <R extends Result>(
     variant: R,
     message: string,
 ): ExtractErr<R> => {

@@ -59,7 +59,7 @@ type Out<M, K extends string> = Exclude<K, keyof M> extends never
  *
  * const red = color.red as Variants<typeof color>;
  *
- * const color_name = match(color, {
+ * const colorName = match(color, {
  *     red: () => "red",
  *     green: () => "green",
  *     blue: () => "blue",

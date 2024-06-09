@@ -28,29 +28,29 @@ Deno.test("Advanced usage", () => {
 });
 
 Deno.test("Nested usage", () => {
-    const ac_status = adt({
+    const acStatus = adt({
         on: null,
         off: null,
     });
 
-    type ACStatus = Variants<typeof ac_status>;
+    type ACStatus = Variants<typeof acStatus>;
 
-    const power_source = adt({
+    const powerSource = adt({
         battery: (voltage: number) => voltage,
         ac: (status: ACStatus, voltage: number) => ({ status, voltage }),
     });
 
-    const ac_on = power_source.ac(ac_status.on, 230);
-    const ac_off = power_source.ac(ac_status.off, 230);
-    const battery = power_source.battery(12);
+    const acOn = powerSource.ac(acStatus.on, 230);
+    const acOff = powerSource.ac(acStatus.off, 230);
+    const battery = powerSource.battery(12);
 
-    assertEquals(ac_on, [
+    assertEquals(acOn, [
         "ac", {
             status: ["on", null],
             voltage: 230,
         },
     ]);
-    assertEquals(ac_off, [
+    assertEquals(acOff, [
         "ac", {
             status: ["off", null],
             voltage: 230,
@@ -71,9 +71,9 @@ Deno.test("Deeply nested usage", () => {
         },
     });
 
-    const my_activity = activity.moving.running.sprinting;
+    const myActivity = activity.moving.running.sprinting;
 
-    assertEquals(my_activity, [
+    assertEquals(myActivity, [
         "moving", [
             "running", [
                 "sprinting",
@@ -98,10 +98,10 @@ Deno.test("Linked list", () => {
 
     const lln = ll<number>();
 
-    const my_list = lln.cons({ head: 1, tail: lln.cons({ head: 2, tail: lln.nil })});
+    const myList = lln.cons({ head: 1, tail: lln.cons({ head: 2, tail: lln.nil })});
 
     // Iterate the linked list:
-    let current = my_list as List<number>;
+    let current = myList as List<number>;
     const values: number[] = [];
 
     while (current[0] !== "nil") {
@@ -110,7 +110,7 @@ Deno.test("Linked list", () => {
     }
 
     assertEquals(values, [1, 2]);
-    assertEquals(my_list, [
+    assertEquals(myList, [
         "cons", {
             head: 1,
             tail: [
